@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>第5章 URLとHTTP</title>
+  <meta name="description" content="PDF「第5章 URLとHTTP」の要約スライド">
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Inter Font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700&display=swap"
+    rel="stylesheet">
+
+  <style>
+    /* 既存のスライドデザインを忠実に再現するためのスタイル */
+    body {
+      font-family: 'Inter', 'Noto Sans JP', sans-serif;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    .code-block {
+      background-color: #1e293b;
+      /* slate-800 */
+      color: #e2e8f0;
+      /* slate-200 */
+      padding: 1rem;
+      border-radius: 0.5rem;
+      font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
+      font-size: 0.875rem;
+      line-height: 1.6;
+      overflow-x: auto;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+    }
+
+    .slide {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.6s ease-in-out, visibility 0.6s;
+      overflow-y: auto;
+      padding: 2rem 1rem;
+    }
+
+    .slide.active {
+      opacity: 1;
+      visibility: visible;
+      z-index: 10;
+    }
+
+    .scrollable-container {
+      width: 100%;
+      height: 100%;
+      overflow-y: auto;
+      padding: 2rem 1rem;
+    }
+
+    .sticky-header {
+      position: -webkit-sticky;
+      /* Safari */
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      padding-top: 1.5rem;
+      padding-bottom: 1.5rem;
+      width: 100%;
+      background: inherit;
+      /* 親の背景を継承 */
+    }
+
+    @keyframes animated-gradient {
+      0% {
+        background-position: 0% 50%;
+      }
+
+      50% {
+        background-position: 100% 50%;
+      }
+
+      100% {
+        background-position: 0% 50%;
+      }
+    }
+
+    .animated-gradient {
+      background-size: 200% 200%;
+      animation: animated-gradient 15s ease infinite;
+    }
+  </style>
+</head>
+
+<body class="bg-gray-50 text-gray-800">
+  <div class="relative w-screen h-screen overflow-hidden">
+    <!-- 装飾要素 -->
+    <div
+      class="absolute top-0 right-0 w-96 h-96 rounded-full bg-purple-400 opacity-10 -translate-y-1/2 translate-x-1/2 blur-3xl">
+    </div>
+    <div
+      class="absolute bottom-0 left-0 w-80 h-80 rounded-full bg-blue-400 opacity-10 translate-y-1/2 -translate-x-1/2 blur-3xl">
+    </div>
+
+    <!-- スライドコンテナ -->
+    <div id="slide-container" class="relative w-full h-full">
+
+      <!-- スライド1: タイトル -->
+      <div class="slide active bg-gradient-to-br from-purple-50 to-indigo-100 animated-gradient" data-slide="0">
+        <div class="text-center relative z-10 p-8">
+          <h1
+            class="text-5xl md:text-6xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent mb-4">
+            第5章 URLとHTTP</h1>
+          <p class="text-xl md:text-2xl text-gray-700 mt-4">Webアプリケーションを支える約束事</p>
+          <p class="text-md md:text-lg text-gray-600 mt-8 max-w-3xl mx-auto">
+            Webの根幹であるURLの構造と、クライアント・サーバ間の通信プロトコルであるHTTPの仕組みを体系的に学びます。
+          </p>
+        </div>
+      </div>
+
+      <!-- スライド2: URLの基本構造 -->
+      <div class="slide bg-gradient-to-br from-gray-100 to-slate-200" data-slide="1">
+        <div class="max-w-4xl mx-auto p-4 md:p-8 text-center">
+          <div class="mb-8 flex items-center justify-center gap-4">
+            <div class="p-3 rounded-full bg-slate-200"><i data-lucide="link" class="w-8 h-8 text-slate-600"></i></div>
+            <h2 class="text-4xl font-bold">URLの基本構造</h2>
+          </div>
+          <p class="text-lg mb-8 max-w-3xl mx-auto">URL（Uniform Resource Locator）は「情報の住所」のようなもの。大きく3つの部分から構成されます。</p>
+          <div class="bg-white/80 p-8 rounded-xl shadow-lg">
+            <div class="code-block text-lg">
+              <pre><code>http://example.jp/index.html</code></pre>
+            </div>
+            <div class="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4 text-left">
+              <div class="border-t-4 border-blue-400 pt-2">
+                <h3 class="font-bold text-blue-700">スキーム (Scheme)</h3>
+                <p class="text-sm mt-1">リソースへのアクセス方法（プロトコル）を指定します。 (例: `http`, `https`) </p>
+              </div>
+              <div class="border-t-4 border-green-400 pt-2">
+                <h3 class="font-bold text-green-700">ホスト (Host)</h3>
+                <p class="text-sm mt-1">リソースが存在するコンピュータ（サーバ）の場所をドメイン名などで指定します。</p>
+              </div>
+              <div class="border-t-4 border-red-400 pt-2">
+                <h3 class="font-bold text-red-700">パス (Path)</h3>
+                <p class="text-sm mt-1">ホスト内のリソースの位置を階層構造で示します。</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- スライド3: URLの詳細構造と実験 (改訂) -->
+      <div class="slide bg-gradient-to-br from-indigo-50 to-purple-100" data-slide="2">
+        <div class="scrollable-container max-w-6xl mx-auto">
+          <div class="sticky-header bg-gradient-to-br from-indigo-50 to-purple-100 flex items-center gap-4">
+            <div class="p-3 rounded-full bg-purple-100"><i data-lucide="telescope" class="w-6 h-6 text-purple-600"></i>
+            </div>
+            <h2 class="text-4xl font-bold">URLの詳細構造と実験</h2>
+          </div>
+          <div class="pt-6 w-full space-y-6">
+            <div class="bg-white/80 p-6 rounded-xl shadow-md text-center">
+              <div class="code-block text-sm md:text-base">
+                <pre><code>foo://user:pass@example.com:8042/over/there?name=ferret#nose</code></pre>
+              </div>
+              <div class="mt-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 text-xs">
+                <div class="bg-blue-100 p-2 rounded"><strong>スキーム:</strong> foo</div>
+                <div class="bg-green-100 p-2 rounded"><strong>ユーザ情報:</strong> user:pass</div>
+                <div class="bg-yellow-100 p-2 rounded"><strong>ホスト:</strong> example.com</div>
+                <div class="bg-red-100 p-2 rounded"><strong>ポート:</strong> 8042</div>
+                <div class="bg-indigo-100 p-2 rounded col-span-2 sm:col-span-3 md:col-span-2"><strong>パス:</strong>
+                  /over/there</div>
+                <div class="bg-purple-100 p-2 rounded col-span-2 sm:col-span-1"><strong>クエリ:</strong> name=ferret</div>
+                <div class="bg-pink-100 p-2 rounded col-span-2 sm:col-span-1"><strong>フラグメント:</strong> nose</div>
+              </div>
+            </div>
+            <div class="bg-white/80 p-6 rounded-xl shadow-md grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
+              <div>
+                <h3 class="font-semibold text-indigo-700 mb-2">コラム1: ポート80番での待受実験</h3>
+                <p class="text-xs mb-2">`sudo`で管理者権限を与えると、標準の80番ポートで待受可能。クライアント側ではポート番号を省略できます。</p>
+                <div class="code-block text-xs">
+                  <pre><code># サーバ側 (80番ポートで待機)
+$ { echo ... } | sudo nc -l 80
+
+# クライアント側 (ポート省略)
+$ curl -v http://localhost/
+* Trying 127.0.0.1:80...
+* Connected to localhost (127.0.0.1) port 80</code></pre>
+                </div>
+              </div>
+              <div>
+                <h3 class="font-semibold text-indigo-700 mb-2">コラム2: その他のスキーム例</h3>
+                <p class="text-xs mb-2">`http`以外にも多様なスキームが存在します。</p>
+                <div class="code-block text-xs">
+                  <pre><code>&lt;!-- 画像を直接埋め込むdataスキーム --&gt;
+&lt;img src="data:image/png;base64,iVBORw..."&gt;
+
+&lt;!-- JSを実行するjavascriptスキーム --&gt;
+&lt;a href="javascript:alert('Hello')"&gt;Click me&lt;/a&gt;</code></pre>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- スライド4: パーセントエンコーディング -->
+      <div class="slide bg-gradient-to-br from-teal-50 to-cyan-100" data-slide="3">
+        <div class="max-w-4xl mx-auto p-4 md:p-8">
+          <div class="mb-8 flex items-center gap-4">
+            <div class="p-3 rounded-full bg-cyan-100"><i data-lucide="binary" class="w-6 h-6 text-cyan-600"></i></div>
+            <h2 class="text-4xl font-bold">URLで使えない文字はどうする？</h2>
+          </div>
+          <p class="text-center mb-6">URLで安全に使える文字は限られています（英数字と一部の記号）。日本語などの文字は<strong
+              class="text-cyan-700">パーセントエンコーディング</strong>で変換されます。</p>
+          <div class="bg-white/80 p-6 rounded-xl shadow-md">
+            <div class="flex flex-col md:flex-row items-center justify-center gap-4 text-center">
+              <div class="p-4 bg-gray-100 rounded-lg">
+                <p class="text-2xl font-bold">技術</p>
+                <p class="text-xs text-gray-500">元の文字列</p>
+              </div>
+              <i data-lucide="arrow-right" class="w-8 h-8 text-cyan-500"></i>
+              <div class="p-4 bg-gray-100 rounded-lg">
+                <p class="text-xl font-mono">e6 8a 80 e8 a1 93</p>
+                <p class="text-xs text-gray-500">文字コード (UTF-8)</p>
+              </div>
+              <i data-lucide="arrow-right" class="w-8 h-8 text-cyan-500"></i>
+              <div class="p-4 bg-gray-100 rounded-lg">
+                <p class="text-lg font-mono">%E6%8A%80%E8%A1%93</p>
+                <p class="text-xs text-gray-500">エンコード後</p>
+              </div>
+            </div>
+            <p class="text-sm mt-6 mb-2">文字コードの確認は、ターミナルで `od` コマンドを使って行えます。</p>
+            <div class="code-block text-sm">
+              <pre><code>$ echo -n "技術" | od -An -tx1
+ e6 8a 80 e8 a1 93</code></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- スライド5: HTTPリクエストの構造 -->
+      <div class="slide bg-gradient-to-br from-red-50 to-pink-100" data-slide="4">
+        <div class="scrollable-container max-w-4xl mx-auto">
+          <div class="sticky-header bg-gradient-to-br from-red-50 to-pink-100 flex items-center gap-4">
+            <div class="p-3 rounded-full bg-pink-100"><i data-lucide="arrow-up-right-square"
+                class="w-6 h-6 text-pink-600"></i></div>
+            <h2 class="text-4xl font-bold">HTTPリクエストの構造</h2>
+          </div>
+          <div class="pt-6">
+            <div class="bg-white/80 p-4 rounded-xl shadow-md">
+              <div class="code-block">
+                <div class="border-b-2 border-dashed border-pink-400 pb-2 mb-2">
+                  <span class="text-pink-300">GET /index.html HTTP/1.1</span>
+                </div>
+                <div class="border-b-2 border-dashed border-pink-400 pb-2 mb-2">
+                  <span class="text-green-300">Host: gihyo.jp</span><br>
+                  <span class="text-green-300">User-Agent: curl/8.4.0</span><br>
+                  <span class="text-green-300">Accept: */*</span>
+                </div>
+                <div>
+                  <span class="text-gray-500">(メッセージボディは空)</span>
+                </div>
+              </div>
+              <div class="mt-4 space-y-2">
+                <div class="p-2 bg-pink-50 rounded-lg border-l-4 border-pink-300">
+                  <h4 class="font-bold text-pink-700">① リクエストライン</h4>
+                  <p class="text-xs">「何を(ターゲット)」「どうする(メソッド)か」を伝える最重要部分。</p>
+                </div>
+                <div class="p-2 bg-green-50 rounded-lg border-l-4 border-green-300">
+                  <h4 class="font-bold text-green-700">② リクエストヘッダ</h4>
+                  <p class="text-xs">リクエストの補足情報。`名前: 値` の形式で複数記述可能。`Host`は必須。</p>
+                </div>
+                <div class="p-2 bg-gray-100 rounded-lg border-l-4 border-gray-300">
+                  <h4 class="font-bold text-gray-700">③ メッセージボディ</h4>
+                  <p class="text-xs">POSTメソッドなどでサーバに送信するデータ本体。</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- スライド6: HTTPレスポンスの構造 -->
+      <div class="slide bg-gradient-to-br from-blue-50 to-sky-100" data-slide="5">
+        <div class="scrollable-container max-w-4xl mx-auto">
+          <div class="sticky-header bg-gradient-to-br from-blue-50 to-sky-100 flex items-center gap-4">
+            <div class="p-3 rounded-full bg-sky-100"><i data-lucide="arrow-down-left-square"
+                class="w-6 h-6 text-sky-600"></i></div>
+            <h2 class="text-4xl font-bold">HTTPレスポンスの構造</h2>
+          </div>
+          <div class="pt-6">
+            <div class="bg-white/80 p-4 rounded-xl shadow-md">
+              <div class="code-block">
+                <div class="border-b-2 border-dashed border-sky-400 pb-2 mb-2">
+                  <span class="text-sky-300">HTTP/1.1 200 OK</span>
+                </div>
+                <div class="border-b-2 border-dashed border-sky-400 pb-2 mb-2">
+                  <span class="text-green-300">Date: Thu, 02 Feb 2023 14:21:43 GMT</span><br>
+                  <span class="text-green-300">Content-Type: text/html; charset=UTF-8</span>
+                </div>
+                <div>
+                  <span class="text-yellow-300">&lt;!DOCTYPE html&gt;</span><br>
+                  <span class="text-yellow-300">&lt;html lang="ja"&gt;...</span>
+                </div>
+              </div>
+              <div class="mt-4 space-y-2">
+                <div class="p-2 bg-sky-50 rounded-lg border-l-4 border-sky-300">
+                  <h4 class="font-bold text-sky-700">① ステータスライン</h4>
+                  <p class="text-xs">処理結果を伝える。特に3桁の<strong class="text-sky-800">ステータスコード</strong>が重要。</p>
+                </div>
+                <div class="p-2 bg-green-50 rounded-lg border-l-4 border-green-300">
+                  <h4 class="font-bold text-green-700">② レスポンスヘッダ</h4>
+                  <p class="text-xs">レスポンスの補足情報。`Content-Type`でデータの種類を示す。</p>
+                </div>
+                <div class="p-2 bg-yellow-50 rounded-lg border-l-4 border-yellow-300">
+                  <h4 class="font-bold text-yellow-700">③ メッセージボディ</h4>
+                  <p class="text-xs">クライアントに返すデータ本体（HTML、画像など）。</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- スライド7: ステータスコード -->
+      <div class="slide bg-gradient-to-br from-green-50 to-emerald-100" data-slide="6">
+        <div class="max-w-4xl mx-auto p-4 md:p-8">
+          <div class="mb-8 flex items-center gap-4">
+            <div class="p-3 rounded-full bg-emerald-100"><i data-lucide="traffic-cone"
+                class="w-6 h-6 text-emerald-600"></i></div>
+            <h2 class="text-4xl font-bold">ステータスコードの分類</h2>
+          </div>
+          <p class="text-center mb-6">3桁の数字で処理結果を伝えます。最初の1桁で大まかな意味がわかります。</p>
+          <div class="bg-white/80 p-6 rounded-xl shadow-md space-y-3">
+            <div class="p-3 bg-blue-100 rounded-lg"><strong>1xx:</strong> 情報 - 処理の継続</div>
+            <div class="p-3 bg-green-100 rounded-lg"><strong>2xx:</strong> 成功 - <strong>200 OK</strong> (成功),
+              <strong>201 Created</strong> (リソース作成成功)</div>
+            <div class="p-3 bg-yellow-100 rounded-lg"><strong>3xx:</strong> リダイレクト - <strong>301 Moved
+                Permanently</strong> (恒久的な移動), <strong>302 Found</strong> (一時的な移動)</div>
+            <div class="p-3 bg-red-100 rounded-lg"><strong>4xx:</strong> クライアントエラー - <strong>400 Bad Request</strong>
+              (リクエスト不正), <strong>403 Forbidden</strong> (アクセス拒否), <strong>404 Not Found</strong> (リソース無し)</div>
+            <div class="p-3 bg-purple-100 rounded-lg"><strong>5xx:</strong> サーバーエラー - <strong>500 Internal Server
+                Error</strong> (サーバ内部エラー), <strong>503 Service Unavailable</strong> (サービス利用不可)</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- スライド8: リクエストメソッドの分類 -->
+      <div class="slide bg-gradient-to-br from-indigo-50 to-purple-100" data-slide="7">
+        <div class="max-w-4xl mx-auto p-4 md:p-8">
+          <div class="mb-8 flex items-center gap-4">
+            <div class="p-3 rounded-full bg-purple-100"><i data-lucide="shuffle" class="w-6 h-6 text-purple-600"></i>
+            </div>
+            <h2 class="text-4xl font-bold">リクエストメソッドの分類</h2>
+          </div>
+          <p class="text-center mb-6">メソッドは「安全」か「べき等」かという性質で分類できます。</p>
+          <div class="bg-white/80 p-6 rounded-xl shadow-md grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <h3 class="font-semibold text-lg mb-2 text-purple-800">安全 (Safe)</h3>
+              <p class="text-sm">リソースの状態を変化させないメソッド。何度実行しても安全。</p>
+              <div class="mt-2 p-2 bg-purple-50 rounded">例: <strong>GET, HEAD, OPTIONS</strong></div>
+            </div>
+            <div>
+              <h3 class="font-semibold text-lg mb-2 text-purple-800">べき等 (Idempotent)</h3>
+              <p class="text-sm">何度実行しても同じ結果になるメソッド。1回と複数回が同じ効果。</p>
+              <div class="mt-2 p-2 bg-purple-50 rounded">例: <strong>GET, HEAD, PUT, DELETE</strong></div>
+            </div>
+          </div>
+          <p class="text-center mt-6 text-sm text-gray-600">POSTは安全でもべき等でもありません。実行するたびに新しいリソースが作られる可能性があるからです。</p>
+        </div>
+      </div>
+
+      <!-- スライド9: 実践: GETリクエスト (改訂) -->
+      <div class="slide bg-gradient-to-br from-orange-50 to-yellow-100" data-slide="8">
+        <div class="scrollable-container max-w-5xl mx-auto">
+          <div class="sticky-header bg-gradient-to-br from-orange-50 to-yellow-100 flex items-center gap-4">
+            <div class="p-3 rounded-full bg-yellow-100"><i data-lucide="send" class="w-6 h-6 text-yellow-600"></i></div>
+            <h2 class="text-4xl font-bold">実践: GETリクエストの確認</h2>
+          </div>
+          <div class="pt-6">
+            <div class="bg-white/80 p-6 rounded-xl shadow-md">
+              <h3 class="font-semibold text-lg mb-2 text-yellow-800">フォーム入力</h3>
+              <div class="flex items-center gap-4 p-4 bg-gray-100 rounded-lg">
+                <div class="flex-1">arg1: <input type="text" value="Hello" class="border rounded p-1 w-full" readonly>
+                </div>
+                <div class="flex-1">arg2: <input type="text" value="Web技術" class="border rounded p-1 w-full" readonly>
+                </div>
+                <div class="flex-1">Path: <input type="text" value="/get-test#frag" class="border rounded p-1 w-full"
+                    readonly></div>
+              </div>
+              <div class="text-center my-4"><i data-lucide="arrow-down" class="w-8 h-8 text-gray-400"></i></div>
+              <h3 class="font-semibold text-lg mb-2 text-yellow-800">生成されるリクエストライン</h3>
+              <p class="text-sm mb-2">フォームの値はURLのパスとクエリに変換されます。フラグメント (`#frag`) はクライアント側で処理されるため、サーバには送信されません。</p>
+              <div class="code-block">
+                <pre><code>GET /get-test?arg1=Hello&arg2=Web%E6%8A%80%E8%A1%93 HTTP/1.1</code></pre>
+              </div>
+              <p class="text-sm mt-2">※GETリクエストではメッセージボディは空です。</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- スライド10: 実践: POSTリクエスト -->
+      <div class="slide bg-gradient-to-br from-lime-50 to-green-100" data-slide="9">
+        <div class="scrollable-container max-w-5xl mx-auto">
+          <div class="sticky-header bg-gradient-to-br from-lime-50 to-green-100 flex items-center gap-4">
+            <div class="p-3 rounded-full bg-green-100"><i data-lucide="send-to-back" class="w-6 h-6 text-green-600"></i>
+            </div>
+            <h2 class="text-4xl font-bold">実践: POSTリクエストの確認</h2>
+          </div>
+          <div class="pt-6">
+            <p class="text-center mb-4">POSTでは、パラメータはURLではなくメッセージボディで送信されます。</p>
+            <div class="bg-white/80 p-6 rounded-xl shadow-md">
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <h3 class="font-semibold text-lg mb-2 text-green-800">リクエストラインとヘッダ</h3>
+                  <p class="text-sm mb-2">リクエストターゲットはパスのみ。`Content-Type`でボディの形式を指定します。</p>
+                  <div class="code-block">
+                    <pre><code>POST /post-test HTTP/1.1
+Content-Type: application/x-www-form-urlencoded</code></pre>
+                  </div>
+                </div>
+                <div>
+                  <h3 class="font-semibold text-lg mb-2 text-green-800">メッセージボディ</h3>
+                  <p class="text-sm mb-2">パラメータはここに格納され、URLエンコードされます。</p>
+                  <div class="code-block">
+                    <pre><code>arg1=Hello&arg2=Web%E6%8A%80%E8%A1%93</code></pre>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- NEW スライド11: Content-Typeによる形式の違い -->
+      <div class="slide bg-gradient-to-br from-cyan-50 to-sky-100" data-slide="10">
+        <div class="scrollable-container max-w-5xl mx-auto">
+          <div class="sticky-header bg-gradient-to-br from-cyan-50 to-sky-100 flex items-center gap-4">
+            <div class="p-3 rounded-full bg-sky-100"><i data-lucide="file-diff" class="w-6 h-6 text-sky-600"></i></div>
+            <h2 class="text-4xl font-bold">実践: POST (Content-Typeの違い)</h2>
+          </div>
+          <div class="pt-6">
+            <p class="text-center mb-4">`Content-Type` を変えると、同じデータでも送信形式が全く異なります。</p>
+            <div class="bg-white/80 p-6 rounded-xl shadow-md">
+              <h3 class="font-semibold text-lg mb-2 text-sky-800">実験: `Content-Type` を `text/plain` に変更</h3>
+              <p class="text-sm mb-2">フォームの `enctype` 属性で `text/plain` を指定します。</p>
+              <div class="code-block text-sm">
+                <pre><code>&lt;form method="post" action="..." enctype="text/plain"&gt; ... &lt;/form&gt;</code></pre>
+              </div>
+              <div class="text-center my-4"><i data-lucide="arrow-down" class="w-8 h-8 text-gray-400"></i></div>
+              <h3 class="font-semibold text-lg mb-2 text-sky-800">結果: 生成されるメッセージボディ</h3>
+              <p class="text-sm mb-2">パーセントエンコードされず、区切り文字も `&` からスペースに変わります。</p>
+              <div class="code-block">
+                <pre><code>arg1=Hello arg2=Web技術</code></pre>
+              </div>
+              <p class="text-sm mt-4"><strong>考察:</strong> `Content-Type` は、リクエストボディをサーバ側でどう解釈すべきかを伝える重要なヘッダです。</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- スライド12: GETとPOSTの使い分け -->
+      <div class="slide bg-gradient-to-br from-gray-200 to-slate-300" data-slide="11">
+        <div class="max-w-4xl mx-auto p-4 md:p-8">
+          <div class="mb-8 flex items-center gap-4">
+            <div class="p-3 rounded-full bg-slate-200"><i data-lucide="git-pull-request-arrow"
+                class="w-6 h-6 text-slate-700"></i></div>
+            <h2 class="text-4xl font-bold">GETとPOSTの使い分け</h2>
+          </div>
+          <p class="text-center mb-6">どちらもサーバに情報を送れますが、HTTPの仕様上、目的が明確に異なります。</p>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="bg-white/80 p-6 rounded-xl shadow-md border-l-4 border-blue-400">
+              <h3 class="text-xl font-semibold mb-2 text-blue-700">GET: 参照 (安全・べき等)</h3>
+              <ul class="list-disc list-inside text-sm space-y-2">
+                <li>サーバからリソースを取得するのが目的。</li>
+                <li>リクエストを何度実行しても結果は同じ。</li>
+                <li>URLにパラメータが含まれるため、ブックマークや共有が可能。</li>
+                <li>例: 検索、記事の閲覧。</li>
+              </ul>
+            </div>
+            <div class="bg-white/80 p-6 rounded-xl shadow-md border-l-4 border-red-400">
+              <h3 class="text-xl font-semibold mb-2 text-red-700">POST: 更新 (安全でない)</h3>
+              <ul class="list-disc list-inside text-sm space-y-2">
+                <li>サーバ上のリソース状態を変更するのが目的。</li>
+                <li>実行するたびに状態が変わる可能性がある。</li>
+                <li>リロードすると「フォーム再送信」の警告が出るのはこのため。</li>
+                <li>例: 会員登録、投稿、注文。</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- スライド13: まとめ -->
+      <div class="slide bg-gradient-to-br from-purple-100 to-indigo-200" data-slide="12">
+        <div class="max-w-4xl mx-auto text-center p-4 md:p-8">
+          <h2 class="text-4xl font-bold mb-10">第5章のまとめ</h2>
+          <div class="space-y-6 text-left bg-white/80 p-8 rounded-xl shadow-lg">
+            <div class="flex items-start gap-4">
+              <i data-lucide="link-2" class="w-10 h-10 text-indigo-600 mt-1"></i>
+              <p><strong>URLは情報の住所:</strong> スキーム、ホスト、パスといった構造で、インターネット上のどこに何があるかを示している。</p>
+            </div>
+            <div class="flex items-start gap-4">
+              <i data-lucide="messages-square" class="w-10 h-10 text-indigo-600 mt-1"></i>
+              <p><strong>HTTPは対話のルール:</strong> クライアントとサーバが、人間にも読めるテキスト形式のリクエストとレスポンスを交換することで通信が成り立つ。</p>
+            </div>
+            <div class="flex items-start gap-4">
+              <i data-lucide="git-commit-vertical" class="w-10 h-10 text-indigo-600 mt-1"></i>
+              <p><strong>GETとPOSTは目的が違う:</strong> GETは「参照」、POSTは「更新」。この目的を正しく理解して使い分けることが、安全なWebアプリケーション開発の第一歩となる。</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ナビゲーション -->
+    <div class="absolute bottom-8 right-8 flex gap-4 z-50">
+      <button id="prev-btn"
+        class="w-12 h-12 rounded-full bg-white/90 shadow-lg flex items-center justify-center text-gray-700 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition-all">
+        <i data-lucide="chevron-left" class="w-6 h-6"></i>
+      </button>
+      <button id="next-btn"
+        class="w-12 h-12 rounded-full bg-white/90 shadow-lg flex items-center justify-center text-gray-700 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition-all">
+        <i data-lucide="chevron-right" class="w-6 h-6"></i>
+      </button>
+    </div>
+
+    <!-- プログレスバー -->
+    <div class="absolute bottom-0 left-0 right-0 h-1 bg-gray-200 z-50">
+      <div id="progress-bar" class="h-full bg-indigo-600 transition-all duration-300 ease-in-out"></div>
+    </div>
+
+    <!-- スライド番号 -->
+    <div class="absolute bottom-8 left-8 text-sm font-medium text-gray-600 z-50">
+      <span id="current-slide">1</span> / <span id="total-slides">13</span>
+    </div>
+  </div>
+
+  <script>
+    // スライドナビゲーションのスクリプト
+    document.addEventListener('DOMContentLoaded', () => {
+      lucide.createIcons();
+
+      const slides = document.querySelectorAll('.slide');
+      const prevBtn = document.getElementById('prev-btn');
+      const nextBtn = document.getElementById('next-btn');
+      const currentSlideEl = document.getElementById('current-slide');
+      const totalSlidesEl = document.getElementById('total-slides');
+      const progressBar = document.getElementById('progress-bar');
+
+      const totalSlides = slides.length;
+      totalSlidesEl.textContent = totalSlides;
+
+      let currentSlide = 0;
+
+      function updateSlide() {
+        slides.forEach((slide, index) => {
+          const scrollable = slide.querySelector('.scrollable-container');
+          if (index === currentSlide) {
+            slide.classList.add('active');
+            if (scrollable) scrollable.scrollTop = 0;
+          } else {
+            slide.classList.remove('active');
+          }
+        });
+
+        currentSlideEl.textContent = currentSlide + 1;
+
+        const progressPercentage = ((currentSlide + 1) / totalSlides) * 100;
+        progressBar.style.width = `${progressPercentage}%`;
+
+        prevBtn.disabled = currentSlide === 0;
+        nextBtn.disabled = currentSlide === totalSlides - 1;
+      }
+
+      function handleNext(e) {
+        e.preventDefault();
+        if (currentSlide < totalSlides - 1) {
+          currentSlide++;
+          updateSlide();
+        }
+      }
+
+      function handlePrev(e) {
+        e.preventDefault();
+        if (currentSlide > 0) {
+          currentSlide--;
+          updateSlide();
+        }
+      }
+
+      nextBtn.addEventListener('click', handleNext);
+      prevBtn.addEventListener('click', handlePrev);
+
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight' && !nextBtn.disabled) {
+          handleNext(e);
+        } else if (e.key === 'ArrowLeft' && !prevBtn.disabled) {
+          handlePrev(e);
+        }
+      });
+
+      updateSlide();
+    });
+  </script>
+</body>
+
+</html>

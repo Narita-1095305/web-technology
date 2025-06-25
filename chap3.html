@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>第3章 WWWの基本要素とその発展</title>
+  <meta name="description" content="PDF「第3章 WWWの基本要素とその発展」の要約スライド">
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Inter Font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+  
+  <style>
+    /* 添付ファイルのデザインを忠実に再現するためのスタイル */
+    body { 
+      font-family: 'Inter', 'Noto Sans JP', sans-serif; 
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+    .code-block {
+      background-color: #1e293b; /* slate-800 */
+      color: #e2e8f0; /* slate-200 */
+      padding: 1rem;
+      border-radius: 0.5rem;
+      font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
+      font-size: 0.875rem;
+      line-height: 1.6;
+      overflow-x: auto;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+    }
+    .slide {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.6s ease-in-out, visibility 0.6s;
+      overflow-y: auto;
+      padding: 2rem 1rem;
+    }
+    .slide.active {
+      opacity: 1;
+      visibility: visible;
+      z-index: 10;
+    }
+    .scrollable-container {
+      width: 100%;
+      height: 100%;
+      overflow-y: auto;
+      padding: 2rem 1rem;
+    }
+    .sticky-header {
+        position: -webkit-sticky; /* Safari */
+        position: sticky;
+        top: 0;
+        z-index: 20;
+        padding-top: 1.5rem;
+        padding-bottom: 1.5rem;
+        width: 100%;
+        background: inherit; /* 親の背景を継承 */
+    }
+    @keyframes animated-gradient {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+    }
+    .animated-gradient {
+        background-size: 200% 200%;
+        animation: animated-gradient 15s ease infinite;
+    }
+    .diagram-box {
+      border: 1px solid theme('colors.gray.300');
+      padding: theme('spacing.4');
+      border-radius: theme('borderRadius.lg');
+      background-color: theme('colors.white / 70%');
+      text-align: center;
+      height: 100%;
+    }
+    .arrow {
+      font-size: 1.5rem;
+      color: theme('colors.gray.400');
+      align-self: center;
+    }
+  </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+  <div class="relative w-screen h-screen overflow-hidden">
+    <!-- 装飾要素 -->
+    <div class="absolute top-0 right-0 w-96 h-96 rounded-full bg-green-400 opacity-10 -translate-y-1/2 translate-x-1/2 blur-3xl"></div>
+    <div class="absolute bottom-0 left-0 w-80 h-80 rounded-full bg-cyan-400 opacity-10 translate-y-1/2 -translate-x-1/2 blur-3xl"></div>
+
+    <!-- スライドコンテナ -->
+    <div id="slide-container" class="relative w-full h-full">
+      
+      <!-- スライド1: タイトル -->
+      <div class="slide active bg-gradient-to-br from-green-50 to-cyan-100 animated-gradient" data-slide="0">
+        <div class="text-center relative z-10 p-8">
+            <h1 class="text-5xl md:text-6xl font-bold bg-gradient-to-r from-cyan-600 to-green-600 bg-clip-text text-transparent mb-4">第3章 WWWの基本要素とその発展</h1>
+            <p class="text-xl md:text-2xl text-gray-700 mt-4">技術のつながりを理解する旅</p>
+            <p class="text-md md:text-lg text-gray-600 mt-8 max-w-3xl mx-auto">
+              Webの礎を築いた先駆者たちの試行錯誤をたどり、現代技術へと至る発展の歴史を深掘りします。
+            </p>
+        </div>
+      </div>
+
+      <!-- スライド2: WWWの始まり -->
+      <div class="slide bg-gradient-to-br from-slate-50 to-gray-200" data-slide="1">
+        <div class="max-w-4xl mx-auto p-4 md:p-8">
+          <div class="mb-10 flex items-center gap-4">
+            <div class="p-3 rounded-full bg-gray-200"><i data-lucide="sparkles" class="w-6 h-6 text-gray-700"></i></div>
+            <h2 class="text-4xl font-bold">World Wide Webの始まり</h2>
+          </div>
+          <div class="bg-white/80 p-6 rounded-xl shadow-md grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
+            <div class="md:col-span-1 flex justify-center">
+              <img src="https://placehold.co/400x400/e2e8f0/334155?text=Tim+Berners-Lee" alt="[ティム・バーナーズ=リーのイラスト]" class="w-40 h-40 rounded-full object-cover shadow-lg">
+            </div>
+            <div class="md:col-span-2 space-y-4">
+              <p><strong>発端:</strong> 1989年、CERNの物理学者<strong class="text-blue-600">ティム・バーナーズ＝リー</strong>が、研究者間の情報共有を効率化するために「Information Management: A Proposal」を執筆。</p>
+              <p><strong>着想:</strong> 「地球上のあらゆるコンピュータの情報がリンクされ、誰もがアクセスできる情報空間」というアイデア。これがWWWの原型となります。</p>
+              <p><strong>実現:</strong> 1990年、彼は世界初のWebサーバ、Webブラウザ兼エディタを開発し、最初のWebサイトを公開しました。</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- スライド3: WWWを構成する3つの基本要素 (修正版) -->
+      <div class="slide bg-gradient-to-br from-blue-50 to-indigo-100" data-slide="2">
+        <div class="max-w-5xl mx-auto p-4 md:p-8 w-full">
+            <div class="mb-8 flex items-center justify-center gap-4">
+                <div class="p-3 rounded-full bg-indigo-100"><i data-lucide="cubes" class="w-8 h-8 text-indigo-600"></i></div>
+                <h2 class="text-4xl font-bold">WWWを構成する3つの基本仕様</h2>
+            </div>
+            <p class="text-center text-lg mb-8">バーナーズ＝リーは、特定のソフトウェアではなく、誰でも実装できる「仕様」を中心にWWWを設計しました。これが技術の発展と普及を促しました。</p>
+            <div class="bg-white/80 p-8 rounded-xl shadow-lg">
+              <div class="grid grid-cols-1 md:grid-cols-5 gap-4 items-stretch text-center">
+                <!-- ブラウザ -->
+                <div class="diagram-box md:col-span-2 flex flex-col justify-between">
+                  <div>
+                    <p class="font-bold">Webブラウザ</p>
+                    <i data-lucide="monitor" class="w-16 h-16 mx-auto my-4 text-gray-600"></i>
+                  </div>
+                  <div class="bg-indigo-100 p-2 rounded-lg mt-4">
+                    <p class="font-semibold text-indigo-800">① URI</p>
+                    <p class="text-xs text-indigo-700">(情報の「住所」)</p>
+                  </div>
+                </div>
+                
+                <!-- 通信 -->
+                <div class="flex flex-col justify-center items-center space-y-2">
+                    <p class="font-semibold">② HTTP</p>
+                    <p class="text-xs text-gray-600 mb-2">(情報の「受渡方法」)</p>
+                    <p class="text-xs">リクエスト →</p>
+                    <i data-lucide="arrow-right-circle" class="w-10 h-10 text-indigo-500"></i>
+                    <i data-lucide="arrow-left-circle" class="w-10 h-10 text-indigo-500 mt-2"></i>
+                    <p class="text-xs">← レスポンス</p>
+                </div>
+
+                <!-- サーバ -->
+                <div class="diagram-box md:col-span-2 flex flex-col justify-between">
+                  <div>
+                    <p class="font-bold">Webサーバ</p>
+                    <i data-lucide="server" class="w-16 h-16 mx-auto my-4 text-gray-600"></i>
+                  </div>
+                  <div class="bg-teal-100 p-2 rounded-lg mt-4">
+                    <p class="font-semibold text-teal-800">③ HTML</p>
+                    <p class="text-xs text-teal-700">(情報の「表現方法」)</p>
+                  </div>
+                </div>
+              </div>
+              <div class="mt-8 p-4 bg-gray-50 rounded-lg text-center text-gray-700">
+                <p><strong>流れ:</strong> ブラウザが <strong>① URI</strong> を使って、サーバに <strong>② HTTP</strong> でリクエストを送信。サーバはレスポンスとして <strong>③ HTML</strong> を返し、ブラウザがそれを解釈して画面に表示します。</p>
+              </div>
+            </div>
+        </div>
+      </div>
+      
+      <!-- スライド4: URI - 理想と現実の狭間で -->
+      <div class="slide bg-gradient-to-br from-red-50 to-pink-100" data-slide="3">
+        <div class="max-w-5xl mx-auto p-4 md:p-8">
+            <div class="mb-8 flex items-center gap-4">
+                <div class="p-3 rounded-full bg-pink-100"><i data-lucide="link" class="w-6 h-6 text-pink-600"></i></div>
+                <h2 class="text-4xl font-bold">URI: 理想と現実の狭間で</h2>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <div class="bg-white/80 p-6 rounded-xl shadow-md">
+                <h3 class="font-semibold text-xl mb-4 text-pink-800">先行技術の理想: ザナドゥ</h3>
+                <p class="text-sm mb-2">テッド・ネルソンが構想した「ザナドゥ」では、リンクは<strong class="text-pink-600">双方向</strong>で、バージョン管理や著作権管理まで統合した非常に高度なものでした。</p>
+                <i data-lucide="links" class="w-12 h-12 mx-auto my-4 text-pink-500"></i>
+                <p class="text-xs text-gray-600">実現が非常に複雑で、大規模な分散システムには不向きでした。</p>
+              </div>
+              <div class="bg-white/80 p-6 rounded-xl shadow-md">
+                <h3 class="font-semibold text-xl mb-4 text-gray-800">WWWの現実的な選択: 単純化</h3>
+                <p class="text-sm mb-2">WWWは実現可能性を重視し、リンクを<strong class="text-gray-600">一方向</strong>の単純なものにしました。これにより爆発的な普及が可能になりました。</p>
+                <i data-lucide="link-2-off" class="w-12 h-12 mx-auto my-4 text-gray-500"></i>
+                <p class="text-xs text-red-600">副作用として、参照先が消える「リンク切れ」や内容の変質といった問題が生まれました。</p>
+              </div>
+            </div>
+        </div>
+      </div>
+
+      <!-- スライド5: HTTP - シンプルさと柔軟性 -->
+      <div class="slide bg-gradient-to-br from-orange-50 to-amber-100" data-slide="4">
+          <div class="max-w-4xl mx-auto p-4 md:p-8">
+              <div class="mb-8 flex items-center gap-4">
+                  <div class="p-3 rounded-full bg-amber-100"><i data-lucide="arrow-left-right" class="w-6 h-6 text-amber-600"></i></div>
+                  <h2 class="text-4xl font-bold">HTTP: シンプルさと柔軟性</h2>
+              </div>
+              <p class="text-lg text-center mb-6">既存プロトコルよりも高速な応答を目指し、シンプルに設計。さらに、既存システムとの共存のために2つの工夫がされました。</p>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="bg-white/80 p-6 rounded-xl shadow-md">
+                  <h3 class="font-semibold text-xl mb-4 text-amber-800">1. スキーム</h3>
+                  <p class="text-sm">URIの先頭部分 (`http:`, `ftp:`) でプロトコルを指定可能に。これにより、FTPなど既存のサーバで公開されている情報もWWWの枠組みで参照できるようになりました。</p>
+                  <div class="code-block mt-4 text-xs"><pre><code>ftp://ftp.example.com/file.zip</code></pre></div>
+                </div>
+                <div class="bg-white/80 p-6 rounded-xl shadow-md">
+                  <h3 class="font-semibold text-xl mb-4 text-amber-800">2. フォーマットネゴシエーション</h3>
+                  <p class="text-sm">クライアントが「自身が解釈できる形式」をサーバに通知。サーバは必要に応じて形式を変換して応答できました。これによりHTML以外の形式も扱える柔軟性を持ちました。</p>
+                </div>
+              </div>
+          </div>
+      </div>
+
+      <!-- NEW スライド6: HTTPを体験する：telnet通信実験 -->
+      <div class="slide bg-gradient-to-br from-gray-100 to-slate-200" data-slide="5">
+        <div class="scrollable-container max-w-4xl mx-auto">
+          <div class="sticky-header bg-gradient-to-br from-gray-100 to-slate-200 flex items-center gap-4">
+            <div class="p-3 rounded-full bg-slate-200"><i data-lucide="terminal" class="w-6 h-6 text-slate-700"></i></div>
+            <h2 class="text-4xl font-bold">HTTPを体験する：telnet通信実験</h2>
+          </div>
+          <div class="pt-6">
+            <p class="text-center mb-6">ブラウザが裏側で行っているHTTP通信を、手元のコマンドで再現してみましょう。これにより、HTTPが人間にも読めるシンプルなテキストのやり取りであることがわかります。</p>
+            <div class="bg-white/80 p-6 rounded-xl shadow-md space-y-6">
+              <div>
+                <h3 class="text-lg font-semibold text-slate-800 mb-2">1. サーバーへの接続</h3>
+                <p class="text-sm mb-2">まずWebサーバー（info.cern.ch）の80番ポートに接続します。</p>
+                <div class="code-block"><pre><code># ターミナルで実行
+telnet info.cern.ch 80</code></pre></div>
+                <p class="text-sm my-2">成功すると、次のようなメッセージが表示されます。</p>
+                <div class="code-block"><pre><code>Trying 188.184.100.182...
+Connected to info.cern.ch.
+Escape character is '^]'.</code></pre></div>
+              </div>
+              <hr/>
+              <div>
+                <h3 class="text-lg font-semibold text-slate-800 mb-2">2. HTTPリクエストの送信</h3>
+                <p class="text-sm mb-2">接続後、以下の2行を入力し、最後にEnterキーを2回押して空行を送信します。</p>
+                <div class="code-block"><pre><code>GET /hypertext/WWW/TheProject.html HTTP/1.1
+Host: info.cern.ch</code></pre></div>
+              </div>
+              <hr/>
+              <div>
+                <h3 class="text-lg font-semibold text-slate-800 mb-2">3. HTTPレスポンスの受信</h3>
+                <p class="text-sm mb-2">サーバーから応答が返ってきます。これがブラウザが受け取る情報の「生」の状態です。</p>
+                <div class="code-block"><pre><code>HTTP/1.1 200 OK
+Date: Tue, 25 Jun 2024 03:44:00 GMT
+Server: Apache
+Last-Modified: Thu, 03 Dec 1992 08:37:20 GMT
+Content-Type: text/html
+... (レスポンスヘッダ) ...
+
+&lt;HEADER&gt;
+&lt;TITLE&gt;The World Wide Web project&lt;/TITLE&gt;
+&lt;NEXTID N="55"&gt;
+&lt;/HEADER&gt;
+&lt;BODY&gt;
+... (HTML本体) ...</code></pre></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- スライド7: HTMLの源流 - SGML -->
+      <div class="slide bg-gradient-to-br from-purple-50 to-indigo-100" data-slide="6">
+          <div class="max-w-4xl mx-auto p-4 md:p-8">
+              <div class="mb-8 flex items-center gap-4">
+                  <div class="p-3 rounded-full bg-indigo-100"><i data-lucide="file-text" class="w-6 h-6 text-indigo-600"></i></div>
+                  <h2 class="text-4xl font-bold">HTMLの源流: SGML</h2>
+              </div>
+              <p class="text-lg text-center mb-6">HTMLは、国際標準のマークアップ言語「SGML」を元に作られました。</p>
+              <div class="bg-white/80 p-6 rounded-xl shadow-md">
+                <h3 class="font-semibold text-xl mb-4 text-indigo-800 text-center">SGMLの重要な思想: 構造と体裁の分離</h3>
+                <div class="flex flex-col md:flex-row items-center justify-around gap-4 mt-6">
+                    <div class="text-center p-4">
+                        <p class="font-bold">文書の論理構造</p>
+                        <div class="mt-2 p-4 bg-indigo-100 rounded-lg shadow-inner text-sm"><code>&lt;title&gt;題名&lt;/title&gt;</code><br><code>&lt;author&gt;著者&lt;/author&gt;</code></div>
+                        <p class="text-sm mt-2 text-gray-600">文書の「意味」をタグで表現</p>
+                    </div>
+                    <div class="arrow text-4xl my-4 md:my-0">&harr;</div>
+                    <div class="text-center p-4">
+                        <p class="font-bold">文書の体裁</p>
+                        <div class="mt-2 p-4 bg-gray-100 rounded-lg shadow-inner text-sm">中央寄せ<br>文字サイズ: 16px</div>
+                        <p class="text-sm mt-2 text-gray-600">見た目の情報は表示側が決定</p>
+                    </div>
+                </div>
+                 <p class="text-sm mt-6 text-center text-indigo-700">この分離により、特定のソフトウェアに依存せず、多様なデバイスで文書を表示できる可能性が生まれました。</p>
+              </div>
+          </div>
+      </div>
+
+      <!-- スライド8: HTMLの誕生 -->
+      <div class="slide bg-gradient-to-br from-cyan-50 to-teal-100" data-slide="7">
+        <div class="max-w-4xl mx-auto p-4 md:p-8 text-center">
+            <div class="mb-8 flex items-center justify-center gap-4">
+                <div class="p-3 rounded-full bg-teal-100"><i data-lucide="file-check-2" class="w-8 h-8 text-teal-600"></i></div>
+                <h2 class="text-4xl font-bold">HTMLの誕生: SGMLの簡略化</h2>
+            </div>
+            <p class="text-lg mb-8 max-w-3xl mx-auto">SGMLは非常に高機能でしたが、その代償として仕様が複雑でした。特に、文書ごとに構造定義(DTD)を作成する必要があり、手軽な情報発信には不向きでした。</p>
+            <div class="bg-white/80 p-8 rounded-xl shadow-lg">
+              <p class="text-xl font-semibold">そこでバーナーズ＝リーは、SGMLの厳密さを捨て、WWWに必要十分な機能に絞った<strong class="text-teal-600">HTML</strong>を考案しました。</p>
+              <ul class="list-disc list-inside text-left mt-6 space-y-2">
+                <li>DTDを毎回定義する必要がない。</li>
+                <li>SGMLのサブセットではなく「親戚のように見える」が、処理を簡略化できる別物として設計。</li>
+                <li>当初からあった「論理構造と体裁の分離」思想により、テキストベースのブラウザでも閲覧が可能だった。</li>
+              </ul>
+            </div>
+        </div>
+      </div>
+
+      <!-- スライド9: CSSの登場 - ブラウザ戦争と再分離 -->
+      <div class="slide bg-gradient-to-br from-yellow-50 to-orange-100" data-slide="8">
+        <div class="scrollable-container max-w-5xl mx-auto">
+          <div class="sticky-header bg-gradient-to-br from-yellow-50 to-orange-100 flex items-center gap-4">
+            <div class="p-3 rounded-full bg-orange-100"><i data-lucide="palette" class="w-6 h-6 text-orange-600"></i></div>
+            <h2 class="text-4xl font-bold">CSSの登場: 思想への回帰</h2>
+          </div>
+          <div class="pt-6">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <div class="bg-white/80 p-6 rounded-xl shadow-md">
+                <h3 class="text-xl font-semibold mb-2 text-orange-800">混乱の時代: ブラウザ戦争</h3>
+                <p class="text-sm mb-4">WWWの商業利用が進むと、NetscapeとInternet Explorerがシェアを争い、見た目をリッチにするための独自拡張を乱発しました。</p>
+                <div class="code-block text-sm"><pre><code>&lt;font color="red"&gt;...&lt;/font&gt;
+&lt;center&gt;...&lt;/center&gt;</code></pre></div>
+                <p class="text-sm mt-4">結果、HTMLに見た目の情報が混ざり、「構造と体裁の分離」という当初の思想が失われてしまいました。</p>
+              </div>
+              <div class="bg-white/80 p-6 rounded-xl shadow-md">
+                <h3 class="text-xl font-semibold mb-2 text-green-800">思想への回帰: CSS</h3>
+                <p class="text-sm mb-4">この混乱を収拾するため、W3Cは1996年に<strong class="text-green-700">CSS (Cascading Style Sheets)</strong> を策定。HTMLから視覚情報を再び分離する道筋を示しました。</p>
+                <div class="code-block text-sm"><pre><code>/* CSSで見た目を定義 */
+h1 { color: red; text-align: center; }</code></pre></div>
+                <p class="text-sm mt-4">HTMLは再び構造に専念し、CSSが見た目を担当することで、保守性や再利用性が大幅に向上しました。</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- スライド10: XMLの登場 - データ交換の必要性 -->
+       <div class="slide bg-gradient-to-br from-gray-200 to-slate-300" data-slide="9">
+        <div class="max-w-4xl mx-auto p-4 md:p-8">
+            <div class="mb-8 flex items-center gap-4">
+                <div class="p-3 rounded-full bg-slate-200"><i data-lucide="database" class="w-6 h-6 text-slate-600"></i></div>
+                <h2 class="text-4xl font-bold">XML: データ交換という新たな要請</h2>
+            </div>
+            <p class="text-center text-lg mb-6">WWWが普及すると、人間が見る文書だけでなく、プログラム間でデータを交換したいという需要が高まりました。</p>
+            <div class="bg-white/80 p-6 rounded-xl shadow-md">
+              <h3 class="text-xl font-semibold mb-4 text-slate-800">なぜHTMLではダメなのか？</h3>
+              <p class="text-sm mb-4">HTMLは人間が見るための言語であり、同じ内容でも多様な書き方が可能です。この「あいまいさ」がプログラムによる自動処理を困難にしていました。</p>
+              <h3 class="text-xl font-semibold mt-6 mb-4 text-blue-800">XMLの誕生</h3>
+              <p class="text-sm mb-4">そこで、SGMLからデータ記述に特化したサブセットとして<strong class="text-blue-600">XML (Extensible Markup Language)</strong> が1998年に誕生。タグを自由に定義でき、スキーマでデータ構造を厳密に規定できるため、データ交換に最適でした。</p>
+              <div class="code-block text-sm"><pre><code>&lt;book&gt;
+  &lt;title&gt;Webを支える技術&lt;/title&gt;
+  &lt;author&gt;山本 陽平&lt;/author&gt;
+&lt;/book&gt;</code></pre></div>
+            </div>
+        </div>
+      </div>
+      
+      <!-- スライド11: XHTML - 理想主義の挑戦と衰退 -->
+      <div class="slide bg-gradient-to-br from-red-100 to-rose-200" data-slide="10">
+        <div class="max-w-4xl mx-auto p-4 md:p-8 text-center">
+            <div class="mb-8 flex items-center justify-center gap-4">
+                <div class="p-3 rounded-full bg-rose-200"><i data-lucide="flask-conical-off" class="w-8 h-8 text-rose-600"></i></div>
+                <h2 class="text-4xl font-bold">XHTML: 理想主義の挑戦と衰退</h2>
+            </div>
+            <p class="text-lg mb-8 max-w-3xl mx-auto">XMLの登場後、「文書もデータの一種なのだから、HTMLもXMLの厳格なルールで再定義しよう」という動きが起こりました。これが<strong class="text-rose-700">XHTML</strong>です。</p>
+            <div class="bg-white/80 p-6 rounded-xl shadow-lg">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <h3 class="font-semibold text-lg text-rose-800 mb-2">目指した理想</h3>
+                    <p class="text-sm">Web上のあらゆる情報をXMLベースで統一的に扱う世界。</p>
+                  </div>
+                  <div>
+                    <h3 class="font-semibold text-lg text-gray-800 mb-2">現場の現実</h3>
+                    <p class="text-sm">表現力は変わらないのに、終了タグの必須化など、記述が厳格になるだけで制作者のメリットが少なく、受け入れられませんでした。</p>
+                  </div>
+                </div>
+                <p class="mt-6 text-center text-rose-700 font-semibold">結果、W3CはXHTMLの開発を2009年に停止。理想の追求が必ずしも良い結果を生むとは限らない教訓を残しました。</p>
+            </div>
+        </div>
+      </div>
+      
+      <!-- スライド12: HTML5からLiving Standardへ -->
+      <div class="slide bg-gradient-to-br from-lime-50 to-green-100" data-slide="11">
+          <div class="scrollable-container max-w-6xl mx-auto">
+              <div class="sticky-header bg-gradient-to-br from-lime-50 to-green-100 flex items-center gap-4">
+                  <div class="p-3 rounded-full bg-green-100"><i data-lucide="refresh-cw" class="w-6 h-6 text-green-600"></i></div>
+                  <h2 class="text-4xl font-bold">HTML5からLiving Standardへ</h2>
+              </div>
+              <div class="pt-6">
+                  <p class="text-center mb-6">XHTMLが行き詰まる一方、現場ではWebアプリケーションの進化に伴い、より豊かなHTML表現が求められていました。</p>
+                  <div class="space-y-4">
+                    <div class="bg-white/80 p-4 rounded-xl shadow-md flex items-center gap-4">
+                      <p class="text-2xl font-bold text-gray-400">1</p>
+                      <div>
+                        <h3 class="font-semibold text-green-800">2004年: WHATWGの発足</h3>
+                        <p class="text-sm">W3Cの進め方に不満を持ったブラウザベンダー(Apple, Mozilla, Opera)が、現場のニーズを反映させるため<strong class="text-green-700">WHATWG</strong>を結成。</p>
+                      </div>
+                    </div>
+                    <div class="bg-white/80 p-4 rounded-xl shadow-md flex items-center gap-4">
+                      <p class="text-2xl font-bold text-gray-400">2</p>
+                      <div>
+                        <h3 class="font-semibold text-green-800">2014年: HTML5勧告</h3>
+                        <p class="text-sm">WHATWGの草案を取り入れ、W3Cが<strong class="text-green-700">HTML5</strong>を勧告。<code>&lt;video&gt;</code>や<code>&lt;canvas&gt;</code>などが追加され、表現力が大幅に向上。</p>
+                      </div>
+                    </div>
+                     <div class="bg-white/80 p-4 rounded-xl shadow-md flex items-center gap-4">
+                      <p class="text-2xl font-bold text-gray-400">3</p>
+                      <div>
+                        <h3 class="font-semibold text-green-800">2019年: Living Standardへ統一</h3>
+                        <p class="text-sm">その後も仕様策定はW3CとWHATWGで分裂していましたが、最終的にWHATWGが策定する「バージョン番号のない、常に進化し続ける仕様」である<strong class="text-green-700">HTML Living Standard</strong>に一本化されました。</p>
+                      </div>
+                    </div>
+                  </div>
+              </div>
+          </div>
+      </div>
+
+      <!-- スライド13: まとめ -->
+      <div class="slide bg-gradient-to-br from-emerald-50 to-teal-100" data-slide="12">
+          <div class="max-w-4xl mx-auto text-center p-4 md:p-8">
+              <h2 class="text-4xl font-bold mb-10">第3章のまとめ</h2>
+              <div class="space-y-6 text-left bg-white/80 p-8 rounded-xl shadow-lg">
+                  <div class="flex items-start gap-4">
+                      <i data-lucide="lightbulb" class="w-10 h-10 text-teal-600 mt-1"></i>
+                      <p><strong>WWWの誕生:</strong> 実現可能性を重視したティム・バーナーズ＝リーの<strong class="text-teal-700">現実的な設計思想（単純化・柔軟性）</strong>が、爆発的な普及の鍵だった。</p>
+                  </div>
+                  <div class="flex items-start gap-4">
+                      <i data-lucide="construction" class="w-10 h-10 text-teal-600 mt-1"></i>
+                      <p><strong>HTMLの進化:</strong> SGMLの「構造と体裁の分離」思想を継承。ブラウザ戦争で一時失われたが、<strong class="text-teal-700">CSS</strong>の登場で回復。データ交換の要請から<strong class="text-teal-700">XML</strong>が生まれた。</p>
+                  </div>
+                  <div class="flex items-start gap-4">
+                      <i data-lucide="users" class="w-10 h-10 text-teal-600 mt-1"></i>
+                      <p><strong>仕様策定の主役交代:</strong> 理想を追ったXHTMLは衰退し、開発現場のニーズを汲んだ<strong class="text-teal-700">WHATWG</strong>が主導権を握り、HTMLは常に進化するLiving Standardとなった。</p>
+                  </div>
+              </div>
+          </div>
+      </div>
+      
+    </div>
+
+    <!-- ナビゲーション -->
+    <div class="absolute bottom-8 right-8 flex gap-4 z-50">
+      <button id="prev-btn" class="w-12 h-12 rounded-full bg-white/90 shadow-lg flex items-center justify-center text-gray-700 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition-all">
+        <i data-lucide="chevron-left" class="w-6 h-6"></i>
+      </button>
+      <button id="next-btn" class="w-12 h-12 rounded-full bg-white/90 shadow-lg flex items-center justify-center text-gray-700 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition-all">
+        <i data-lucide="chevron-right" class="w-6 h-6"></i>
+      </button>
+    </div>
+
+    <!-- プログレスバー -->
+    <div class="absolute bottom-0 left-0 right-0 h-1 bg-gray-200 z-50">
+      <div id="progress-bar" class="h-full bg-cyan-600 transition-all duration-300 ease-in-out"></div>
+    </div>
+
+    <!-- スライド番号 -->
+    <div class="absolute bottom-8 left-8 text-sm font-medium text-gray-600 z-50">
+      <span id="current-slide">1</span> / <span id="total-slides">13</span>
+    </div>
+  </div>
+
+  <script>
+    // 添付ファイルのJSを忠実に再現
+    document.addEventListener('DOMContentLoaded', () => {
+      lucide.createIcons();
+
+      const slides = document.querySelectorAll('.slide');
+      const prevBtn = document.getElementById('prev-btn');
+      const nextBtn = document.getElementById('next-btn');
+      const currentSlideEl = document.getElementById('current-slide');
+      const totalSlidesEl = document.getElementById('total-slides');
+      const progressBar = document.getElementById('progress-bar');
+      
+      const totalSlides = slides.length;
+      totalSlidesEl.textContent = totalSlides;
+      
+      let currentSlide = 0;
+
+      function updateSlide() {
+        slides.forEach((slide, index) => {
+          const scrollable = slide.querySelector('.scrollable-container');
+          if (index === currentSlide) {
+            slide.classList.add('active');
+            if (scrollable) scrollable.scrollTop = 0; // スクロール位置をリセット
+          } else {
+            slide.classList.remove('active');
+          }
+        });
+        
+        currentSlideEl.textContent = currentSlide + 1;
+        
+        const progressPercentage = ((currentSlide + 1) / totalSlides) * 100;
+        progressBar.style.width = `${progressPercentage}%`;
+        
+        prevBtn.disabled = currentSlide === 0;
+        nextBtn.disabled = currentSlide === totalSlides - 1;
+      }
+
+      nextBtn.addEventListener('click', () => {
+        if (currentSlide < totalSlides - 1) {
+          currentSlide++;
+          updateSlide();
+        }
+      });
+
+      prevBtn.addEventListener('click', () => {
+        if (currentSlide > 0) {
+          currentSlide--;
+          updateSlide();
+        }
+      });
+      
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight' && !nextBtn.disabled) {
+          nextBtn.click();
+        } else if (e.key === 'ArrowLeft' && !prevBtn.disabled) {
+          prevBtn.click();
+        }
+      });
+
+      updateSlide();
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>第2章 Webシステムの全体像</title>
+  <meta name="description" content="PDF「第2章 Webシステムの全体像」の要約スライド">
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Inter Font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+  
+  <style>
+    body { 
+      font-family: 'Inter', 'Noto Sans JP', sans-serif; 
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+    .slide {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.6s ease-in-out, visibility 0.6s;
+      overflow-y: auto;
+      padding: 2rem 1rem;
+    }
+    .slide.active {
+      opacity: 1;
+      visibility: visible;
+      z-index: 10;
+    }
+    .scrollable-container {
+      width: 100%;
+      height: 100%;
+      overflow-y: auto;
+      padding: 2rem 1rem;
+    }
+    .sticky-header {
+        position: -webkit-sticky; /* Safari */
+        position: sticky;
+        top: 0;
+        z-index: 20;
+        padding-top: 1.5rem;
+        padding-bottom: 1.5rem;
+        width: 100%;
+        background: inherit; /* 親の背景を継承 */
+    }
+    @keyframes animated-gradient {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+    }
+    .animated-gradient {
+        background-size: 200% 200%;
+        animation: animated-gradient 15s ease infinite;
+    }
+  </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+  <div class="relative w-screen h-screen overflow-hidden">
+    <!-- 装飾要素 -->
+    <div class="absolute top-0 right-0 w-96 h-96 rounded-full bg-blue-400 opacity-10 -translate-y-1/2 translate-x-1/2 blur-3xl"></div>
+    <div class="absolute bottom-0 left-0 w-80 h-80 rounded-full bg-purple-400 opacity-10 translate-y-1/2 -translate-x-1/2 blur-3xl"></div>
+
+    <!-- スライドコンテナ -->
+    <div id="slide-container" class="relative w-full h-full">
+      
+      <!-- スライド1: タイトル -->
+      <div class="slide active bg-gradient-to-br from-blue-50 to-indigo-100 animated-gradient" data-slide="0">
+        <div class="text-center relative z-10 p-8">
+            <h1 class="text-5xl md:text-6xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent mb-4">第2章 Webシステムの全体像</h1>
+            <p class="text-xl md:text-2xl text-gray-700 mt-4">技術の地図を手に入れる</p>
+            <p class="text-md md:text-lg text-gray-600 mt-8 max-w-3xl mx-auto">
+              Webシステムを構成する要素を分解し、個々の技術がどこに位置し、どのような役割を担うのかを理解することで、技術に対する「目利きの力」を養います。
+            </p>
+        </div>
+      </div>
+      
+      <!-- スライド2: Webシステムの基本構造 -->
+      <div class="slide bg-gradient-to-br from-slate-50 to-gray-100" data-slide="1">
+        <div class="scrollable-container max-w-6xl mx-auto">
+          <div class="sticky-header bg-gradient-to-br from-slate-50 to-gray-100 flex items-center gap-4">
+            <div class="p-3 rounded-full bg-gray-200"><i data-lucide="sitemap" class="w-6 h-6 text-gray-600"></i></div>
+            <h2 class="text-4xl font-bold">Webシステムの基本構造</h2>
+          </div>
+          <div class="pt-6">
+            <p class="text-center mb-6">私たちが普段「ネット」として利用している世界は、開発者の視点では大きく3つの領域に分けられます。</p>
+            <div class="bg-white/80 p-6 rounded-xl shadow-md">
+                <!-- 図の再現 -->
+                <div class="border-b-2 border-dashed pb-4 mb-4">
+                    <p class="text-center font-semibold text-gray-600 mb-2">一般利用者が抱く「ネット」のイメージ</p>
+                    <div class="flex items-center justify-around">
+                        <i data-lucide="user" class="w-10 h-10 text-gray-500"></i>
+                        <div class="text-center">
+                            <i data-lucide="laptop" class="w-12 h-12 text-gray-500 mx-auto"></i>
+                            <i data-lucide="smartphone" class="w-8 h-8 text-gray-500 mx-auto"></i>
+                            <p class="text-xs">PC/スマホ</p>
+                        </div>
+                         <i data-lucide="arrow-right" class="w-8 h-8 text-gray-400"></i>
+                        <div class="text-center">
+                            <i data-lucide="wifi" class="w-12 h-12 text-gray-500"></i>
+                             <p class="text-xs">Wi-Fi</p>
+                        </div>
+                         <i data-lucide="arrow-right" class="w-8 h-8 text-gray-400"></i>
+                        <div class="text-center">
+                            <i data-lucide="cloud" class="w-16 h-16 text-gray-500"></i>
+                             <p class="text-xs">「ネット」</p>
+                        </div>
+                    </div>
+                </div>
+                 <div class="flex justify-center items-center my-4"><i data-lucide="arrow-down" class="w-8 h-8 text-indigo-400"></i></div>
+                 <!-- 開発者視点の図 -->
+                 <div class="grid grid-cols-3 gap-2">
+                    <!-- クライアントサイド -->
+                    <div class="border-2 border-dashed border-blue-300 p-2 rounded-lg bg-blue-50/50">
+                        <p class="text-center font-bold text-sm text-blue-700 mb-2">クライアントサイド</p>
+                        <div class="bg-white border border-gray-300 p-2 rounded text-center">
+                            <p class="font-semibold text-xs">Webブラウザ</p>
+                             <div class="bg-gray-100 p-1 mt-1 rounded text-left text-xs space-y-1">
+                                <p class="border-b">レンダリングエンジン</p>
+                                <p class="border-b">HTTPクライアント</p>
+                                <p>JavaScriptエンジン</p>
+                            </div>
+                            <p class="text-xs mt-1">デバイス</p>
+                        </div>
+                    </div>
+                    <!-- ネットワーク -->
+                    <div class="flex flex-col items-center justify-center border-2 border-dashed border-green-300 p-2 rounded-lg bg-green-50/50">
+                        <p class="font-bold text-sm text-green-700">ネットワーク</p>
+                        <i data-lucide="arrow-left-right" class="w-8 h-8 my-2 text-gray-400"></i>
+                         <div class="text-center">
+                            <i data-lucide="cloud" class="w-12 h-12 text-green-600"></i>
+                             <p class="text-xs">インターネット</p>
+                        </div>
+                        <i data-lucide="arrow-left-right" class="w-8 h-8 my-2 text-gray-400"></i>
+                    </div>
+                    <!-- サーバーサイド -->
+                    <div class="border-2 border-dashed border-purple-300 p-2 rounded-lg bg-purple-50/50">
+                        <p class="text-center font-bold text-sm text-purple-700 mb-2">サーバーサイド</p>
+                         <div class="bg-white border border-gray-300 p-8 rounded text-center">
+                            <p class="font-semibold text-xs">サーバサイド<br>アプリケーション</p>
+                        </div>
+                    </div>
+                 </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- スライド3: Webコンテンツ -->
+      <div class="slide bg-gradient-to-br from-pink-50 to-rose-100" data-slide="2">
+        <div class="max-w-4xl mx-auto p-4 md:p-8">
+            <div class="mb-8 flex items-center gap-4">
+                <div class="p-3 rounded-full bg-rose-100"><i data-lucide="file-text" class="w-6 h-6 text-rose-600"></i></div>
+                <h2 class="text-4xl font-bold">Webコンテンツとは？</h2>
+            </div>
+            <p class="text-center mb-6">Webサイトを通じてユーザーに提供される情報全般。HTMLを基点に、CSS、画像、JavaScriptなどが組み合わさって構成されます。</p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="bg-white/80 p-6 rounded-xl shadow-md">
+                    <h3 class="text-xl font-semibold text-rose-700 mb-2">静的コンテンツ</h3>
+                    <p class="text-sm">あらかじめ用意された情報。記事や組織紹介など、内容が固定的なページで使われます。</p>
+                </div>
+                <div class="bg-white/80 p-6 rounded-xl shadow-md">
+                    <h3 class="text-xl font-semibold text-rose-700 mb-2">動的コンテンツ</h3>
+                    <p class="text-sm">ユーザーの操作や状況に応じてその場で生成される情報。検索結果や地図、SNSのタイムラインなどが代表例です。</p>
+                </div>
+            </div>
+        </div>
+      </div>
+
+      <!-- スライド4: クライアントサイドの構成要素 -->
+      <div class="slide bg-gradient-to-br from-blue-50 to-sky-100" data-slide="3">
+        <div class="max-w-5xl mx-auto p-4 md:p-8">
+            <div class="mb-8 flex items-center gap-4">
+                <div class="p-3 rounded-full bg-sky-100"><i data-lucide="smartphone" class="w-6 h-6 text-sky-600"></i></div>
+                <h2 class="text-4xl font-bold">クライアントサイドの構成要素</h2>
+            </div>
+            <div class="bg-white/80 p-6 rounded-xl shadow-lg">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="flex flex-col justify-center">
+                      <p>クライアントサイドは、ユーザーが操作する<strong class="text-sky-700">デバイス</strong>上で動作する<strong class="text-sky-700">Webブラウザ</strong>が中心です。ブラウザはさらに内部の機能部品に分けられます。</p>
+                    </div>
+                    <div class="space-y-4">
+                        <div class="p-3 bg-sky-50 rounded-lg border-l-4 border-sky-300">
+                            <h4 class="font-bold">HTTPクライアント</h4>
+                            <p class="text-xs">サーバーと通信し、Webコンテンツを取得する。</p>
+                        </div>
+                        <div class="p-3 bg-sky-50 rounded-lg border-l-4 border-sky-300">
+                            <h4 class="font-bold">レンダリングエンジン</h4>
+                            <p class="text-xs">HTML/CSSを解釈し、画面に表示する (Blink, WebKit, Gecko)。</p>
+                        </div>
+                        <div class="p-3 bg-sky-50 rounded-lg border-l-4 border-sky-300">
+                            <h4 class="font-bold">JavaScriptエンジン</h4>
+                            <p class="text-xs">JavaScriptを実行し、動的な処理を実現する (V8)。</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+      </div>
+      
+      <!-- スライド5: サーバーサイドの構成要素 -->
+      <div class="slide bg-gradient-to-br from-purple-50 to-indigo-100" data-slide="4">
+        <div class="max-w-4xl mx-auto p-4 md:p-8 text-center">
+            <div class="mb-8 flex items-center justify-center gap-4">
+                <div class="p-3 rounded-full bg-indigo-100"><i data-lucide="server" class="w-8 h-8 text-indigo-600"></i></div>
+                <h2 class="text-4xl font-bold">サーバーサイドの構成要素</h2>
+            </div>
+            <p class="text-lg mb-8 max-w-3xl mx-auto">HTTPリクエストを受け、Webコンテンツを返すのがサーバーサイドの役割。その中核を担うのが<strong class="text-indigo-600">Webサーバー</strong>と、独自の処理を行う<strong class="text-indigo-600">Webアプリケーション</strong>です。</p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div class="bg-white/80 p-6 rounded-xl shadow-md">
+                <h3 class="text-xl font-semibold mb-2">Webサーバー</h3>
+                <p class="text-sm">HTTP通信を司り、静的コンテンツの配信やアクセス制御、後続のアプリケーションへのリクエスト転送などを行う。(例: Apache, nginx)</p>
+              </div>
+              <div class="bg-white/80 p-6 rounded-xl shadow-md">
+                <h3 class="text-xl font-semibold mb-2">Webアプリケーション</h3>
+                <p class="text-sm">動的コンテンツの生成やデータベースとの連携など、システム固有のビジネスロジックを実装します。</p>
+              </div>
+            </div>
+        </div>
+      </div>
+
+      <!-- スライド6: Webアプリの実行方式 (改訂) -->
+      <div class="slide bg-gradient-to-br from-orange-50 to-amber-100" data-slide="5">
+          <div class="scrollable-container max-w-6xl mx-auto">
+              <div class="sticky-header bg-gradient-to-br from-orange-50 to-amber-100 flex items-center gap-4">
+                  <div class="p-3 rounded-full bg-amber-100"><i data-lucide="terminal-square" class="w-6 h-6 text-amber-600"></i></div>
+                  <h2 class="text-4xl font-bold">Webアプリケーションの実行方式</h2>
+              </div>
+              <div class="pt-6">
+                <p class="text-center mb-6">WebサーバーとWebアプリケーションの連携方法には、歴史的な変遷といくつかのパターンがあります。</p>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <div class="bg-white/80 p-4 rounded-xl shadow-md">
+                        <h3 class="font-bold text-sm text-amber-800">① プロセス起動 (CGI)</h3>
+                        <p class="text-xs mt-1">リクエスト毎にアプリを起動。シンプルだが低速。古典的な手法。</p>
+                    </div>
+                    <div class="bg-white/80 p-4 rounded-xl shadow-md">
+                        <h3 class="font-bold text-sm text-amber-800">② モジュール方式</h3>
+                        <p class="text-xs mt-1">Webサーバー内に言語の実行モジュールを組み込む。高速だが構成が限られる。</p>
+                    </div>
+                    <div class="bg-white/80 p-4 rounded-xl shadow-md">
+                        <h3 class="font-bold text-sm text-amber-800">③ 分離型独立プロセス</h3>
+                        <p class="text-xs mt-1">Webサーバーとアプリが別プロセスで常駐。リクエストを転送する現代的な構成。</p>
+                    </div>
+                    <div class="bg-white/80 p-4 rounded-xl shadow-md">
+                        <h3 class="font-bold text-sm text-amber-800">④ 一体型独立プロセス</h3>
+                        <p class="text-xs mt-1">アプリ自体がHTTPサーバー機能も内包。小規模システムや開発時に手軽。</p>
+                    </div>
+                    <div class="bg-white/80 p-4 rounded-xl shadow-md">
+                        <h3 class="font-bold text-sm text-amber-800">⑤ アプリケーションサーバ</h3>
+                        <p class="text-xs mt-1">複数のWebアプリを稼働・管理する機能を持つ。大規模システムで利用されたが、近年は減少傾向。</p>
+                    </div>
+                </div>
+              </div>
+          </div>
+      </div>
+
+      <!-- スライド7: ソフトウェアスタック -->
+      <div class="slide bg-gradient-to-br from-green-50 to-emerald-100" data-slide="6">
+        <div class="max-w-4xl mx-auto p-4 md:p-8">
+            <div class="mb-8 flex items-center gap-4">
+                <div class="p-3 rounded-full bg-emerald-100"><i data-lucide="layers-3" class="w-6 h-6 text-emerald-600"></i></div>
+                <h2 class="text-4xl font-bold">ソフトウェアスタックとは？</h2>
+            </div>
+            <p class="text-center mb-6">システムを構築するために利用するソフトウェアの組み合わせ。古典的な例として<strong class="text-emerald-700">LAMP</strong>があります。</p>
+            <div class="flex flex-col md:flex-row gap-8 items-center">
+              <div class="flex-1 space-y-4">
+                  <div class="p-3 bg-white/80 rounded-lg shadow-sm"><strong>Webアプリフレームワーク:</strong> 共通処理をまとめ、開発を効率化。(例: Laravel, Ruby on Rails, Spring)</div>
+                  <div class="p-3 bg-white/80 rounded-lg shadow-sm"><strong>プログラミング言語:</strong> ビジネスロジックを実装。(例: PHP, Ruby, Java, Go)</div>
+                  <div class="p-3 bg-white/80 rounded-lg shadow-sm"><strong>データベース:</strong> データを永続的に管理。(例: MySQL, PostgreSQL)</div>
+              </div>
+              <div class="flex-1 w-full md:w-auto">
+                <div class="bg-white/80 p-6 rounded-xl shadow-lg relative text-center">
+                    <div class="absolute inset-x-0 top-0 h-1/2 bg-gray-200"></div>
+                    <div class="relative grid grid-cols-2 h-48">
+                      <div class="bg-red-200 flex items-center justify-center p-2 border border-gray-300">
+                          <p class="font-bold text-red-800">Apache<br>(Web Server)</p>
+                      </div>
+                       <div class="bg-blue-200 flex items-center justify-center p-2 border border-gray-300">
+                          <p class="font-bold text-blue-800">MySQL<br>(Database)</p>
+                      </div>
+                      <div class="absolute inset-x-1/4 top-1/4 w-1/2 h-1/2 bg-yellow-200 flex items-center justify-center p-2 border-2 border-dashed border-gray-500">
+                         <p class="font-bold text-xs text-yellow-800">PHP/Perl/Python<br>(Language)</p>
+                      </div>
+                      <div class="col-span-2 bg-green-200 flex items-center justify-center p-2 border border-gray-300">
+                          <p class="font-bold text-green-800">Linux (OS)</p>
+                      </div>
+                    </div>
+                    <p class="mt-2 text-sm font-semibold">LAMPスタックの構成イメージ</p>
+                </div>
+              </div>
+            </div>
+        </div>
+      </div>
+      
+      <!-- スライド8: ネットワークとCDN -->
+      <div class="slide bg-gradient-to-br from-cyan-50 to-blue-100" data-slide="7">
+        <div class="max-w-5xl mx-auto p-4 md:p-8">
+            <div class="mb-8 flex items-center gap-4">
+                <div class="p-3 rounded-full bg-blue-100"><i data-lucide="globe" class="w-6 h-6 text-blue-600"></i></div>
+                <h2 class="text-4xl font-bold">ネットワークとパフォーマンス</h2>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="bg-white/80 p-4 rounded-xl shadow-md">
+                    <h3 class="text-lg font-semibold text-blue-700 mb-2">ロードバランサ</h3>
+                    <p class="text-sm">リクエストを複数のサーバーに振り分け、負荷を分散させる装置。大量アクセスに対応します。</p>
+                </div>
+                <div class="bg-white/80 p-4 rounded-xl shadow-md">
+                    <h3 class="text-lg font-semibold text-blue-700 mb-2">CDN (Content Delivery Network)</h3>
+                    <p class="text-sm">世界中のエッジサーバーにコンテンツのコピーを配置し、ユーザーに最も近い場所から配信することで、地理的な遅延を解消します。</p>
+                </div>
+            </div>
+        </div>
+      </div>
+
+      <!-- スライド9: 実行環境と開発環境 -->
+      <div class="slide bg-gradient-to-br from-gray-200 to-slate-300" data-slide="8">
+        <div class="max-w-5xl mx-auto p-4 md:p-8">
+            <div class="mb-8 flex items-center gap-4">
+                <div class="p-3 rounded-full bg-slate-300"><i data-lucide="computer" class="w-6 h-6 text-slate-700"></i></div>
+                <h2 class="text-4xl font-bold">実行環境と開発環境</h2>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="bg-white/80 p-4 rounded-xl shadow-md">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-2">実行環境の多様化</h3>
+                    <ul class="text-sm space-y-2">
+                      <li><strong>クライアント:</strong> PC (Win/Mac/Linux) からスマホ・タブレット (iOS/Android) へ主役が移行。</li>
+                      <li><strong>サーバー:</strong> オンプレミスからクラウドへ。OSはLinuxが主流。IaaSやPaaSの活用が一般的に。</li>
+                    </ul>
+                </div>
+                <div class="bg-white/80 p-4 rounded-xl shadow-md">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-2">開発環境の柔軟性</h3>
+                     <ul class="text-sm space-y-2">
+                        <li>Mac, Windows (WSL), Linuxが主要な開発OS。</li>
+                        <li>コンテナ技術 (Docker) の普及により、環境差異を吸収しやすくなった。</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+      </div>
+
+      <!-- スライド10: 技術の全体像マップ -->
+      <div class="slide bg-gradient-to-br from-indigo-100 to-purple-200" data-slide="9">
+          <div class="scrollable-container max-w-7xl mx-auto">
+              <div class="sticky-header bg-gradient-to-br from-indigo-100 to-purple-200 flex items-center gap-4">
+                  <div class="p-3 rounded-full bg-purple-200"><i data-lucide="map" class="w-6 h-6 text-purple-700"></i></div>
+                  <h2 class="text-4xl font-bold">Webシステムを実現する技術マップ</h2>
+              </div>
+              <div class="pt-6">
+                  <p class="text-center mb-6">本章で解説した要素は、これらの技術によって実現されています。青色が本書で重点的に解説する技術です。</p>
+                  <div class="bg-white/90 p-4 rounded-xl shadow-lg text-xs">
+                      <!-- Diagram Start -->
+                      <div class="grid grid-cols-3 gap-2">
+                          <!-- Client Side -->
+                          <div class="col-span-1 border-2 border-dashed p-2 rounded-lg border-blue-300 bg-blue-50/50">
+                              <h3 class="font-bold text-center text-blue-700">クライアントサイド</h3>
+                              <div class="bg-white border rounded p-2 mt-2">
+                                  <p class="font-semibold text-center">Webブラウザ</p>
+                                  <div class="bg-gray-100 p-1 mt-1 rounded text-left space-y-1">
+                                      <p>レンダリングエンジン</p>
+                                      <p>HTTPクライアント</p>
+                                      <p>JavaScriptエンジン</p>
+                                  </div>
+                              </div>
+                          </div>
+                          <!-- Network -->
+                          <div class="col-span-1 border-2 border-dashed p-2 rounded-lg border-green-300 bg-green-50/50 flex items-center justify-center">
+                              <h3 class="font-bold text-center text-green-700">ネットワーク</h3>
+                          </div>
+                          <!-- Server Side -->
+                           <div class="col-span-1 border-2 border-dashed p-2 rounded-lg border-purple-300 bg-purple-50/50">
+                              <h3 class="font-bold text-center text-purple-700">サーバーサイド</h3>
+                              <div class="bg-white border rounded p-8 mt-2">
+                                  <p class="font-semibold text-center">サーバサイド<br>アプリケーション</p>
+                              </div>
+                          </div>
+                      </div>
+                      <!-- Tech Categories -->
+                      <div class="grid grid-cols-1 md:grid-cols-3 gap-2 mt-2">
+                          <!-- Column 1 -->
+                          <div class="space-y-2">
+                              <div class="bg-gray-100 p-2 rounded">
+                                  <h4 class="font-bold">Webコンテンツを表現する技術</h4>
+                                  <div class="flex flex-wrap gap-1 mt-1"><span class="bg-blue-200 px-2 py-0.5 rounded-full">HTML</span><span class="bg-blue-200 px-2 py-0.5 rounded-full">CSS</span></div>
+                              </div>
+                              <div class="bg-gray-100 p-2 rounded">
+                                  <h4 class="font-bold">「使いやすさ」を提供する技術</h4>
+                                  <div class="flex flex-wrap gap-1 mt-1"><span class="bg-gray-200 px-2 py-0.5 rounded-full">Server-sent events</span><span class="bg-blue-200 px-2 py-0.5 rounded-full">WebSocket</span><span class="bg-blue-200 px-2 py-0.5 rounded-full">クライアントサイドJavaScript</span></div>
+                              </div>
+                          </div>
+                          <!-- Column 2 -->
+                          <div class="space-y-2">
+                               <div class="bg-gray-100 p-2 rounded">
+                                  <h4 class="font-bold">システムを繋ぐ技術</h4>
+                                  <div class="flex flex-wrap gap-1 mt-1"><span class="bg-blue-200 px-2 py-0.5 rounded-full">WebAPI</span><span class="bg-gray-200 border border-black px-2 py-0.5 rounded-full">GraphQL</span><span class="bg-gray-200 border border-black px-2 py-0.5 rounded-full">gRPC</span></div>
+                              </div>
+                              <div class="bg-gray-100 p-2 rounded">
+                                  <h4 class="font-bold">通信を効率化する技術</h4>
+                                  <div class="flex flex-wrap gap-1 mt-1"><span class="bg-blue-200 px-2 py-0.5 rounded-full">HTTP/2</span><span class="bg-blue-200 px-2 py-0.5 rounded-full">HTTP/3</span></div>
+                              </div>
+                              <div class="bg-gray-100 p-2 rounded">
+                                  <h4 class="font-bold">情報を保護する技術</h4>
+                                  <div class="flex flex-wrap gap-1 mt-1"><span class="bg-blue-200 px-2 py-0.5 rounded-full">TLS(HTTPS)</span><span class="bg-gray-200 px-2 py-0.5 rounded-full">公開鍵暗号</span><span class="bg-blue-200 px-2 py-0.5 rounded-full">OAuth</span><span class="bg-blue-200 px-2 py-0.5 rounded-full">OIDC</span></div>
+                              </div>
+                          </div>
+                          <!-- Column 3 -->
+                          <div class="space-y-2">
+                              <div class="bg-gray-100 p-2 rounded">
+                                  <h4 class="font-bold">データを表現する技術</h4>
+                                  <div class="flex flex-wrap gap-1 mt-1"><span class="bg-blue-200 px-2 py-0.5 rounded-full">JSON</span><span class="bg-gray-200 px-2 py-0.5 rounded-full">XML</span></div>
+                              </div>
+                              <div class="bg-gray-100 p-2 rounded">
+                                  <h4 class="font-bold">アプリケーションを効率良く作る技術</h4>
+                                  <div class="flex flex-wrap gap-1 mt-1"><span class="bg-gray-200 px-2 py-0.5 rounded-full">Webアプリケーションフレームワーク</span></div>
+                              </div>
+                              <div class="bg-gray-100 p-2 rounded">
+                                  <h4 class="font-bold">情報を管理する技術</h4>
+                                  <div class="flex flex-wrap gap-1 mt-1"><span class="bg-gray-200 px-2 py-0.5 rounded-full">リレーショナルデータベース</span><span class="bg-gray-200 border border-black px-2 py-0.5 rounded-full">ドキュメントデータベース</span><span class="bg-gray-200 border border-black px-2 py-0.5 rounded-full">キーバリューストア</span></div>
+                              </div>
+                          </div>
+                      </div>
+                      <div class="grid grid-cols-1 md:grid-cols-2 gap-2 mt-2">
+                          <div class="bg-gray-100 p-2 rounded">
+                              <h4 class="font-bold">大量の要求に対応する技術</h4>
+                              <div class="flex flex-wrap gap-1 mt-1"><span class="bg-gray-200 px-2 py-0.5 rounded-full">CDN</span><span class="bg-gray-200 px-2 py-0.5 rounded-full">ロードバランサ</span></div>
+                          </div>
+                          <div class="bg-gray-100 p-2 rounded">
+                                <h4 class="font-bold">システム運用を効率化する技術</h4>
+                                <div class="flex flex-wrap gap-1 mt-1"><span class="bg-gray-200 px-2 py-0.5 rounded-full">仮想化</span><span class="bg-gray-200 border border-black px-2 py-0.5 rounded-full">コンテナ</span></div>
+                          </div>
+                      </div>
+                      <div class="bg-gray-100 p-2 rounded mt-2">
+                          <h4 class="font-bold">情報を伝える技術</h4>
+                          <div class="flex flex-wrap gap-1 mt-1"><span class="bg-gray-200 px-2 py-0.5 rounded-full">IPv4</span><span class="bg-gray-200 px-2 py-0.5 rounded-full">IPv6</span><span class="bg-gray-200 px-2 py-0.5 rounded-full">UDP</span><span class="bg-gray-200 px-2 py-0.5 rounded-full">TCP</span><span class="bg-gray-200 px-2 py-0.5 rounded-full">DNS</span><span class="bg-blue-200 px-2 py-0.5 rounded-full">HTTP/1.1</span></div>
+                      </div>
+                      <div class="mt-4 text-xs">
+                          <strong>【凡例】</strong>
+                          <span class="bg-blue-200 px-2 py-0.5 rounded-full">本書で解説する技術</span>
+                          <span class="bg-gray-200 px-2 py-0.5 rounded-full">本書の付録等で軽く紹介する技術</span>
+                          <span class="bg-gray-200 border border-black px-2 py-0.5 rounded-full">近年登場または普及した技術</span>
+                      </div>
+                      <!-- Diagram End -->
+                  </div>
+              </div>
+          </div>
+      </div>
+
+      <!-- スライド11: まとめ -->
+      <div class="slide bg-gradient-to-br from-emerald-50 to-teal-100" data-slide="10">
+          <div class="max-w-4xl mx-auto text-center p-4 md:p-8">
+              <h2 class="text-4xl font-bold mb-10">まとめ</h2>
+              <div class="space-y-6 bg-white/80 p-8 rounded-xl shadow-lg">
+                <p>Webシステムは、クライアント、サーバー、ネットワークという3つの領域から成り立ち、それぞれが多様な技術の組み合わせで実現されています。</p>
+                <p class="font-semibold text-teal-800">この全体像（技術の地図）を頭に入れておくことで、個々の技術を学ぶ際にその位置づけや役割を理解しやすくなり、効率的な学習に繋がります。</p>
+              </div>
+          </div>
+      </div>
+
+    </div>
+
+    <!-- ナビゲーション -->
+    <div class="absolute bottom-8 right-8 flex gap-4 z-50">
+      <button id="prev-btn" class="w-12 h-12 rounded-full bg-white/90 shadow-lg flex items-center justify-center text-gray-700 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition-all">
+        <i data-lucide="chevron-left" class="w-6 h-6"></i>
+      </button>
+      <button id="next-btn" class="w-12 h-12 rounded-full bg-white/90 shadow-lg flex items-center justify-center text-gray-700 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition-all">
+        <i data-lucide="chevron-right" class="w-6 h-6"></i>
+      </button>
+    </div>
+
+    <!-- プログレスバー -->
+    <div class="absolute bottom-0 left-0 right-0 h-1 bg-gray-200 z-50">
+      <div id="progress-bar" class="h-full bg-indigo-600 transition-all duration-300 ease-in-out"></div>
+    </div>
+
+    <!-- スライド番号 -->
+    <div class="absolute bottom-8 left-8 text-sm font-medium text-gray-600 z-50">
+      <span id="current-slide">1</span> / <span id="total-slides">11</span>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      lucide.createIcons();
+
+      const slides = document.querySelectorAll('.slide');
+      const prevBtn = document.getElementById('prev-btn');
+      const nextBtn = document.getElementById('next-btn');
+      const currentSlideEl = document.getElementById('current-slide');
+      const totalSlidesEl = document.getElementById('total-slides');
+      const progressBar = document.getElementById('progress-bar');
+      
+      const totalSlides = slides.length;
+      totalSlidesEl.textContent = totalSlides;
+      
+      let currentSlide = 0;
+
+      function updateSlide() {
+        slides.forEach((slide, index) => {
+          const scrollable = slide.querySelector('.scrollable-container');
+          if (index === currentSlide) {
+            slide.classList.add('active');
+            if (scrollable) scrollable.scrollTop = 0;
+          } else {
+            slide.classList.remove('active');
+          }
+        });
+        
+        currentSlideEl.textContent = currentSlide + 1;
+        
+        const progressPercentage = ((currentSlide + 1) / totalSlides) * 100;
+        progressBar.style.width = `${progressPercentage}%`;
+        
+        prevBtn.disabled = currentSlide === 0;
+        nextBtn.disabled = currentSlide === totalSlides - 1;
+      }
+
+      nextBtn.addEventListener('click', () => {
+        if (currentSlide < totalSlides - 1) {
+          currentSlide++;
+          updateSlide();
+        }
+      });
+
+      prevBtn.addEventListener('click', () => {
+        if (currentSlide > 0) {
+          currentSlide--;
+          updateSlide();
+        }
+      });
+      
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight' && !nextBtn.disabled) {
+          nextBtn.click();
+        } else if (e.key === 'ArrowLeft' && !prevBtn.disabled) {
+          prevBtn.click();
+        }
+      });
+
+      updateSlide();
+    });
+  </script>
+</body>
+</html>

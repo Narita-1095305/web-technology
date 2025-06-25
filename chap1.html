@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>第1章 技術の学び方</title>
+  <meta name="description" content="PDF「第1章 技術の学び方」の要約スライド">
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Inter Font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+  
+  <style>
+    body { 
+      font-family: 'Inter', 'Noto Sans JP', sans-serif; 
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+    .code-block {
+      background-color: #1e293b; /* slate-800 */
+      color: #e2e8f0; /* slate-200 */
+      padding: 1rem;
+      border-radius: 0.5rem;
+      font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
+      font-size: 0.875rem;
+      line-height: 1.6;
+      overflow-x: auto;
+      white-space: pre;
+      word-wrap: normal;
+    }
+    .slide {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.6s ease-in-out, visibility 0.6s;
+      overflow-y: auto;
+      padding: 2rem 1rem;
+    }
+    .slide.active {
+      opacity: 1;
+      visibility: visible;
+      z-index: 10;
+    }
+    .scrollable-container {
+      width: 100%;
+      height: 100%;
+      overflow-y: auto;
+      padding: 2rem 1rem;
+    }
+    .sticky-header {
+        position: -webkit-sticky; /* Safari */
+        position: sticky;
+        top: 0;
+        z-index: 20;
+        padding-top: 1.5rem;
+        padding-bottom: 1.5rem;
+        width: 100%;
+        background: inherit; /* 親の背景を継承 */
+    }
+    @keyframes animated-gradient {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+    }
+    .animated-gradient {
+        background-size: 200% 200%;
+        animation: animated-gradient 15s ease infinite;
+    }
+    .concept-box {
+      background-color: theme('colors.white / 80%');
+      border-radius: theme('borderRadius.xl');
+      padding: theme('spacing.6');
+      box-shadow: theme('boxShadow.md');
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+    .arrow {
+      color: theme('colors.indigo.400');
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+  <div class="relative w-screen h-screen overflow-hidden">
+    <!-- 装飾要素 -->
+    <div class="absolute top-0 right-0 w-96 h-96 rounded-full bg-blue-400 opacity-10 -translate-y-1/2 translate-x-1/2 blur-3xl"></div>
+    <div class="absolute bottom-0 left-0 w-80 h-80 rounded-full bg-purple-400 opacity-10 translate-y-1/2 -translate-x-1/2 blur-3xl"></div>
+
+    <!-- スライドコンテナ -->
+    <div id="slide-container" class="relative w-full h-full">
+      
+      <!-- スライド1: タイトル -->
+      <div class="slide active bg-gradient-to-br from-blue-50 to-indigo-100 animated-gradient" data-slide="0">
+        <div class="text-center relative z-10 p-8">
+            <h1 class="text-5xl md:text-6xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent mb-4">第1章 技術の学び方</h1>
+            <p class="text-xl md:text-2xl text-gray-700 mt-4">複雑化する世界で、本質的な力を身につけるために</p>
+            <p class="text-md md:text-lg text-gray-600 mt-8 max-w-3xl mx-auto">
+              本書は、Webシステム開発の足腰となる知識を整理し、自力で新たな技術を学び取れる力をつけることを目指します。
+            </p>
+        </div>
+      </div>
+
+      <!-- スライド2: なぜ学びは難しくなったか？ -->
+      <div class="slide bg-gradient-to-br from-red-50 to-pink-100" data-slide="1">
+        <div class="max-w-4xl mx-auto p-4 md:p-8">
+          <div class="mb-10 flex items-center gap-4">
+            <div class="p-3 rounded-full bg-pink-100"><i data-lucide="help-circle" class="w-6 h-6 text-pink-600"></i></div>
+            <h2 class="text-4xl font-bold">なぜ技術の学びは難しくなったか？</h2>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="bg-white/80 p-6 rounded-xl shadow-md text-center">
+              <i data-lucide="puzzle" class="w-12 h-12 mx-auto text-red-500 mb-4"></i>
+              <h3 class="text-xl font-semibold">1. 要件の多様さと複雑さ</h3>
+              <p class="text-sm mt-2 text-gray-600">ITが業務効率化の道具から、ビジネスの中核そのものへ。競争優位性を生むための複雑な要件が増加しました。</p>
+            </div>
+            <div class="bg-white/80 p-6 rounded-xl shadow-md text-center">
+              <i data-lucide="library" class="w-12 h-12 mx-auto text-red-500 mb-4"></i>
+              <h3 class="text-xl font-semibold">2. 技術的選択肢の増加</h3>
+              <p class="text-sm mt-2 text-gray-600">言語・フレームワークが爆発的に増加。組み合わせは膨大で、最適な選択が困難になっています。</p>
+            </div>
+            <div class="bg-white/80 p-6 rounded-xl shadow-md text-center">
+              <i data-lucide="cloud" class="w-12 h-12 mx-auto text-red-500 mb-4"></i>
+              <h3 class="text-xl font-semibold">3. クラウドサービスの普及</h3>
+              <p class="text-sm mt-2 text-gray-600">インフラとアプリの境界が曖昧になり、開発者に求められるスキルセットが格段に広がりました。</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- スライド3: 技術のブラックボックス化 -->
+      <div class="slide bg-gradient-to-br from-gray-100 to-slate-200" data-slide="2">
+        <div class="max-w-4xl mx-auto p-4 md:p-8 text-center">
+            <div class="mb-8 flex items-center justify-center gap-4">
+                <div class="p-3 rounded-full bg-slate-200"><i data-lucide="box" class="w-8 h-8 text-slate-600"></i></div>
+                <h2 class="text-4xl font-bold">便利な道具の弊害：ブラックボックス化</h2>
+            </div>
+            <p class="text-lg mb-8 max-w-3xl mx-auto">便利なフレームワークやサービスは、多くの仕組みを隠蔽します。表層的な使い方を覚えるだけでは、本質的な理解は得られず、問題解決や応用が困難になります。</p>
+            <div class="flex items-center justify-center gap-4 text-gray-500">
+                <div class="concept-box w-40 h-40">
+                    <i data-lucide="code" class="w-12 h-12 mb-2"></i>
+                    使い方を覚える
+                </div>
+                <i data-lucide="x-circle" class="w-10 h-10 text-red-500"></i>
+                <div class="concept-box w-40 h-40">
+                    <i data-lucide="brain-cog" class="w-12 h-12 mb-2"></i>
+                    本質的な理解
+                </div>
+            </div>
+            <p class="mt-8 text-indigo-600 font-semibold">理解の本質とは、仕組みを説明でき、使いどころを自分で考えられるようになること。</p>
+        </div>
+      </div>
+      
+      <!-- スライド4: 「技術の引き出し」を作ろう -->
+      <div class="slide bg-gradient-to-br from-purple-50 to-indigo-100" data-slide="3">
+        <div class="max-w-5xl mx-auto p-4 md:p-8 text-center">
+            <div class="mb-8 flex items-center justify-center gap-4">
+                <div class="p-3 rounded-full bg-purple-100"><i data-lucide="archive" class="w-8 h-8 text-purple-600"></i></div>
+                <h2 class="text-4xl font-bold">解決策：「技術の引き出し」を作ろう</h2>
+            </div>
+            <p class="text-lg mb-8 max-w-3xl mx-auto">個々の技術をバラバラに覚えるのではなく、関連付け、体系化して頭の中に整理された「引き出し」を作ることが重要です。これにより、目的に応じた技術を素早く選び取り、未知の技術にも対応しやすくなります。</p>
+            <div class="flex flex-col md:flex-row items-center justify-center gap-4 md:gap-8">
+                <div class="concept-box w-48 h-48">
+                    <i data-lucide="lightbulb" class="w-16 h-16 text-purple-500 mb-4"></i>
+                    <h3 class="text-xl font-bold">点</h3>
+                    <p class="text-sm mt-1">個々の技術</p>
+                </div>
+                <div class="arrow text-3xl my-4 md:my-0">&rarr;</div>
+                <div class="concept-box w-48 h-48">
+                    <i data-lucide="milestone" class="w-16 h-16 text-purple-500 mb-4"></i>
+                    <h3 class="text-xl font-bold">線</h3>
+                    <p class="text-sm mt-1">歴史・変遷</p>
+                </div>
+                <div class="arrow text-3xl my-4 md:my-0">&rarr;</div>
+                <div class="concept-box w-48 h-48">
+                    <i data-lucide="layout-grid" class="w-16 h-16 text-purple-500 mb-4"></i>
+                    <h3 class="text-xl font-bold">面</h3>
+                    <p class="text-sm mt-1">相互の関連性</p>
+                </div>
+                 <div class="arrow text-3xl my-4 md:my-0">&rarr;</div>
+                <div class="concept-box w-48 h-48">
+                    <i data-lucide="layers" class="w-16 h-16 text-purple-500 mb-4"></i>
+                    <h3 class="text-xl font-bold">立体</h3>
+                    <p class="text-sm mt-1">階層・抽象化</p>
+                </div>
+            </div>
+        </div>
+      </div>
+
+      <!-- スライド5: 点から線へ -->
+      <div class="slide bg-gradient-to-br from-blue-50 to-sky-100" data-slide="4">
+          <div class="max-w-4xl mx-auto p-4 md:p-8">
+              <div class="mb-8 flex items-center gap-4">
+                  <div class="p-3 rounded-full bg-sky-100"><i data-lucide="milestone" class="w-6 h-6 text-sky-600"></i></div>
+                  <h2 class="text-4xl font-bold">Step 1: 点から線へ (歴史を知る)</h2>
+              </div>
+              <p class="text-lg mb-6">技術が「なぜ登場したのか」という背景や課題を知ることで、点の知識が発展の文脈を持つ「線」の知識になります。</p>
+              <div class="bg-white/80 p-6 rounded-xl shadow-md">
+                <h3 class="font-semibold text-xl mb-4 text-sky-800">例: HTTP/1.1からHTTP/2へ</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <h4 class="font-semibold">HTTP/1.1</h4>
+                        <p class="text-sm mt-1">シンプルで普及したが、通信量増加により非効率な点が問題に。</p>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold">HTTP/2</h4>
+                        <p class="text-sm mt-1">HTTP/1.1の非効率性を解決するために登場。互換性を保ちつつ通信を効率化。</p>
+                    </div>
+                </div>
+                <div class="mt-6 p-4 bg-sky-50 rounded-lg border border-sky-200">
+                    <h4 class="font-semibold text-sky-700">積み上げ学習のメリット</h4>
+                    <p class="text-sm mt-2">いきなり最新技術(HTTP/2)を学ぶより、基礎(HTTP/1.1)から順に積み上げる方が、発展の経緯が理解でき、結果的に学習効率が良くなります。将来の新技術へのキャッチアップも容易になります。</p>
+                </div>
+              </div>
+          </div>
+      </div>
+
+      <!-- スライド6: 線から面へ -->
+      <div class="slide bg-gradient-to-br from-green-50 to-emerald-100" data-slide="5">
+          <div class="max-w-5xl mx-auto p-4 md:p-8">
+              <div class="mb-8 flex items-center gap-4">
+                  <div class="p-3 rounded-full bg-emerald-100"><i data-lucide="layout-grid" class="w-6 h-6 text-emerald-600"></i></div>
+                  <h2 class="text-4xl font-bold">Step 2: 線から面へ (関連性を知る)</h2>
+              </div>
+              <p class="text-lg mb-6">技術は単独では存在せず、相互に補完し合ったり、同じ課題に別のアプローチで挑んだりしています。この横のつながりを理解するのが「面」の理解です。</p>
+              <div class="bg-white/80 p-6 rounded-xl shadow-md">
+                <h3 class="font-semibold text-xl mb-4 text-emerald-800">例: HTMLとCSSの役割分担</h3>
+                <div class="flex flex-col md:flex-row items-center justify-around gap-4">
+                    <div class="text-center p-4">
+                        <p class="font-bold">HTMLの黎明期</p>
+                        <div class="mt-2 p-4 bg-gray-100 rounded-lg shadow-inner">構造 + 見た目</div>
+                        <p class="text-sm mt-2 text-gray-600">記述が複雑化し、可読性・保守性が低下</p>
+                    </div>
+                    <div class="arrow text-4xl my-4 md:my-0">&darr;</div>
+                    <div class="text-center p-4">
+                        <p class="font-bold">CSSの登場後</p>
+                        <div class="flex gap-2 mt-2">
+                            <div class="p-4 bg-blue-100 rounded-lg shadow-inner">HTML<br>(構造・意味)</div>
+                            <div class="p-4 bg-green-100 rounded-lg shadow-inner">CSS<br>(見た目)</div>
+                        </div>
+                        <p class="text-sm mt-2 text-gray-600">役割を分離し、保守性と再利用性が向上</p>
+                    </div>
+                </div>
+                 <p class="text-sm mt-6 text-center text-emerald-700">この経緯を知らないと、非推奨な古い書き方をしてしまうなど、技術を正しく使えない可能性があります。</p>
+              </div>
+          </div>
+      </div>
+      
+      <!-- NEW スライド7: 具体例：HTMLとCSSのコード比較 -->
+      <div class="slide bg-gradient-to-br from-cyan-50 to-teal-100" data-slide="6">
+        <div class="scrollable-container max-w-6xl mx-auto">
+          <div class="sticky-header bg-gradient-to-br from-cyan-50 to-teal-100 flex items-center gap-4">
+            <div class="p-3 rounded-full bg-teal-100"><i data-lucide="code-2" class="w-6 h-6 text-teal-600"></i></div>
+            <h2 class="text-4xl font-bold">具体例：HTMLとCSSのコード比較</h2>
+          </div>
+          <div class="pt-6">
+            <p class="text-center mb-6">役割分担の経緯を知らないと古い書き方をしてしまう可能性が。見た目は同じでも、保守性や意味合いが大きく異なります。</p>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+              <!-- 非推奨の例 -->
+              <div class="bg-white/80 p-4 rounded-xl shadow-md border-l-4 border-red-400">
+                <h3 class="text-lg font-semibold text-red-700 mb-2">非推奨の例 (HTMLのみで表現)</h3>
+                <p class="text-xs mb-2 text-gray-600">見た目の情報 (`font`タグ, `b`タグ) がHTML文書内に直接書き込まれてしまっています。</p>
+                <div class="code-block text-sm"><pre><code>&lt;font color="red"&gt;&lt;b&gt;【注意】...&lt;/b&gt;&lt;/font&gt;</code></pre></div>
+                <h4 class="font-semibold mt-4 mb-2 text-red-800">問題点:</h4>
+                <ul class="list-disc list-inside text-sm space-y-1">
+                  <li>HTMLの構造が複雑になる</li>
+                  <li>デザイン修正時に多くのHTMLファイルを変更する必要がある</li>
+                  <li>非推奨タグであり、将来サポートされなくなる可能性がある</li>
+                </ul>
+              </div>
+              <!-- 推奨される例 -->
+              <div class="bg-white/80 p-4 rounded-xl shadow-md border-l-4 border-green-400">
+                <h3 class="text-lg font-semibold text-green-700 mb-2">推奨される例 (HTMLとCSSで分離)</h3>
+                <p class="text-xs mb-2 text-gray-600">HTMLは`class`で文章の「意味」を定義し、具体的な見た目はCSSに委ねています。</p>
+                <div class="code-block text-sm mb-2"><pre><code>&lt;span class="attention"&gt;【注意】...&lt;/span&gt;</code></pre></div>
+                <div class="code-block text-sm"><pre><code>.attention {
+  color: red;
+  font-weight: bold;
+}</code></pre></div>
+                <h4 class="font-semibold mt-4 mb-2 text-green-800">利点:</h4>
+                <ul class="list-disc list-inside text-sm space-y-1">
+                  <li>HTMLは構造、CSSはデザインと役割が明確になる</li>
+                  <li>CSSファイルを1つ変更すれば、サイト全体のデザインを変更できる</li>
+                  <li>メンテナンス性と再利用性が高い</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+       <!-- スライド8: 面から立体へ (旧スライド7) -->
+      <div class="slide bg-gradient-to-br from-amber-50 to-orange-100" data-slide="7">
+        <div class="scrollable-container max-w-5xl mx-auto">
+          <div class="sticky-header bg-gradient-to-br from-amber-50 to-orange-100 flex items-center gap-4">
+            <div class="p-3 rounded-full bg-orange-100"><i data-lucide="layers" class="w-6 h-6 text-orange-600"></i></div>
+            <h2 class="text-4xl font-bold">Step 3: 面から立体へ (階層を知る)</h2>
+          </div>
+          <div class="pt-6">
+             <p class="text-lg mb-6 text-center">似た役割の技術をグルーピングし、各グループ（階層・レイヤ）間の依存関係を捉えることで、技術全体を「立体」的に理解できます。</p>
+            <div class="bg-white/80 p-6 rounded-xl shadow-md">
+                <h3 class="font-semibold text-xl mb-4 text-orange-800 text-center">Web技術の階層モデル (例)</h3>
+                 <!-- 階層の図 -->
+                <div class="space-y-2">
+                    <!-- アプリケーション層 -->
+                    <div class="bg-amber-100 p-4 rounded-lg shadow-inner">
+                        <p class="font-bold text-center text-amber-800">Webコンテンツ層</p>
+                        <div class="mt-2 flex justify-center gap-2 flex-wrap">
+                            <div class="bg-white px-3 py-1 rounded-full shadow">HTML</div>
+                            <div class="bg-white px-3 py-1 rounded-full shadow">CSS</div>
+                            <div class="bg-white px-3 py-1 rounded-full shadow">JavaScript</div>
+                            <div class="bg-white px-3 py-1 rounded-full shadow">Cookie</div>
+                             <div class="bg-white px-3 py-1 rounded-full shadow">Session</div>
+                        </div>
+                    </div>
+                    <div class="text-center text-2xl text-orange-400">&darr; 依存</div>
+                    <!-- HTTP層 -->
+                    <div class="bg-orange-100 p-4 rounded-lg shadow-inner">
+                        <p class="font-bold text-center text-orange-800">アプリケーションプロトコル層</p>
+                        <div class="mt-2 flex justify-center gap-2 flex-wrap">
+                            <div class="bg-white px-3 py-1 rounded-full shadow">HTTP/1.1, HTTP/2</div>
+                            <div class="bg-white px-3 py-1 rounded-full shadow">DNS</div>
+                            <div class="bg-white px-3 py-1 rounded-full shadow">SSL/TLS</div>
+                        </div>
+                    </div>
+                     <div class="text-center text-2xl text-orange-400">&darr; 依存</div>
+                    <!-- トランスポート層以下 -->
+                     <div class="bg-red-100 p-4 rounded-lg shadow-inner">
+                        <p class="font-bold text-center text-red-800">トランスポート/インターネット層</p>
+                        <div class="mt-2 flex justify-center gap-2 flex-wrap">
+                            <div class="bg-white px-3 py-1 rounded-full shadow">TCP</div>
+                            <div class="bg-white px-3 py-1 rounded-full shadow">UDP</div>
+                            <div class="bg-white px-3 py-1 rounded-full shadow">IP</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- スライド9: 技術の引き出しの完成 (旧スライド8) -->
+      <div class="slide bg-gradient-to-br from-indigo-100 to-purple-200" data-slide="8">
+        <div class="max-w-4xl mx-auto p-4 md:p-8 text-center">
+            <div class="mb-8 flex items-center justify-center gap-4">
+                <div class="p-3 rounded-full bg-purple-100"><i data-lucide="check-check" class="w-8 h-8 text-purple-600"></i></div>
+                <h2 class="text-4xl font-bold">「技術の引き出し」の完成イメージ</h2>
+            </div>
+            <p class="text-lg mb-8 max-w-3xl mx-auto">このように体系化された知識があれば、新しい技術が登場しても、それがどの階層の、どの技術の延長線上にあるのかを把握し、差分を学習するだけで効率的に習得できます。</p>
+            <div class="bg-white/80 p-6 rounded-xl shadow-2xl border-4 border-purple-300">
+                <div class="border-b-2 border-purple-200 pb-4 mb-4">
+                    <p class="font-bold text-lg text-purple-700">階層A</p>
+                    <p class="text-sm">同じ目的の技術の変遷や特徴を理解 (線の理解)</p>
+                </div>
+                 <div class="border-b-2 border-purple-200 pb-4 mb-4">
+                    <p class="font-bold text-lg text-purple-700">階層B</p>
+                     <p class="text-sm">横の技術との関連性を理解 (面の理解)</p>
+                </div>
+                <div>
+                    <p class="font-bold text-lg text-purple-700">階層間の関係</p>
+                     <p class="text-sm">階層間の依存関係を理解 (立体の理解)</p>
+                </div>
+            </div>
+        </div>
+      </div>
+
+      <!-- スライド10: まとめ (旧スライド9) -->
+      <div class="slide bg-gradient-to-br from-emerald-50 to-teal-100" data-slide="9">
+          <div class="max-w-4xl mx-auto text-center p-4 md:p-8">
+              <h2 class="text-4xl font-bold mb-10">まとめ</h2>
+              <div class="space-y-6 text-left bg-white/80 p-8 rounded-xl shadow-lg">
+                  <div class="flex items-start gap-4">
+                      <i data-lucide="milestone" class="w-8 h-8 text-teal-600 mt-1"></i>
+                      <p><strong>「点」を「線」へ:</strong> 技術の登場背景や歴史を知り、時系列でつなげる。</p>
+                  </div>
+                  <div class="flex items-start gap-4">
+                      <i data-lucide="layout-grid" class="w-8 h-8 text-teal-600 mt-1"></i>
+                      <p><strong>「線」を「面」へ:</strong> 同時期の技術間の関係性を理解し、横のつながりを把握する。</p>
+                  </div>
+                  <div class="flex items-start gap-4">
+                      <i data-lucide="layers" class="w-8 h-8 text-teal-600 mt-1"></i>
+                      <p><strong>「面」を「立体」へ:</strong> 技術を役割で分類・階層化し、全体の構造を俯瞰する。</p>
+                  </div>
+              </div>
+          </div>
+      </div>
+
+    </div>
+
+    <!-- ナビゲーション -->
+    <div class="absolute bottom-8 right-8 flex gap-4 z-50">
+      <button id="prev-btn" class="w-12 h-12 rounded-full bg-white/90 shadow-lg flex items-center justify-center text-gray-700 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition-all">
+        <i data-lucide="chevron-left" class="w-6 h-6"></i>
+      </button>
+      <button id="next-btn" class="w-12 h-12 rounded-full bg-white/90 shadow-lg flex items-center justify-center text-gray-700 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition-all">
+        <i data-lucide="chevron-right" class="w-6 h-6"></i>
+      </button>
+    </div>
+
+    <!-- プログレスバー -->
+    <div class="absolute bottom-0 left-0 right-0 h-1 bg-gray-200 z-50">
+      <div id="progress-bar" class="h-full bg-indigo-600 transition-all duration-300 ease-in-out"></div>
+    </div>
+
+    <!-- スライド番号 -->
+    <div class="absolute bottom-8 left-8 text-sm font-medium text-gray-600 z-50">
+      <span id="current-slide">1</span> / <span id="total-slides">10</span>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      lucide.createIcons();
+
+      const slides = document.querySelectorAll('.slide');
+      const prevBtn = document.getElementById('prev-btn');
+      const nextBtn = document.getElementById('next-btn');
+      const currentSlideEl = document.getElementById('current-slide');
+      const totalSlidesEl = document.getElementById('total-slides');
+      const progressBar = document.getElementById('progress-bar');
+      
+      const totalSlides = slides.length;
+      totalSlidesEl.textContent = totalSlides;
+      
+      let currentSlide = 0;
+
+      function updateSlide() {
+        slides.forEach((slide, index) => {
+          const scrollable = slide.querySelector('.scrollable-container');
+          if (index === currentSlide) {
+            slide.classList.add('active');
+            if (scrollable) scrollable.scrollTop = 0;
+          } else {
+            slide.classList.remove('active');
+          }
+        });
+        
+        currentSlideEl.textContent = currentSlide + 1;
+        
+        const progressPercentage = ((currentSlide + 1) / totalSlides) * 100;
+        progressBar.style.width = `${progressPercentage}%`;
+        
+        prevBtn.disabled = currentSlide === 0;
+        nextBtn.disabled = currentSlide === totalSlides - 1;
+      }
+
+      nextBtn.addEventListener('click', () => {
+        if (currentSlide < totalSlides - 1) {
+          currentSlide++;
+          updateSlide();
+        }
+      });
+
+      prevBtn.addEventListener('click', () => {
+        if (currentSlide > 0) {
+          currentSlide--;
+          updateSlide();
+        }
+      });
+      
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight' && !nextBtn.disabled) {
+          nextBtn.click();
+        } else if (e.key === 'ArrowLeft' && !prevBtn.disabled) {
+          prevBtn.click();
+        }
+      });
+
+      updateSlide();
+    });
+  </script>
+</body>
+</html>
