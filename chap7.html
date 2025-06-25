@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>第7章 SPAへの進化</title>
+  <meta name="description" content="PDF「第7章 SPAへの進化」の要約スライド">
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Inter Font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+  
+  <style>
+    /* 既存のスライドデザインを忠実に再現するためのスタイル */
+    body { 
+      font-family: 'Inter', 'Noto Sans JP', sans-serif; 
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+    .code-block {
+      background-color: #1e293b; /* slate-800 */
+      color: #e2e8f0; /* slate-200 */
+      padding: 1rem;
+      border-radius: 0.5rem;
+      font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
+      font-size: 0.875rem;
+      line-height: 1.6;
+      overflow-x: auto;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+    }
+    .slide {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.6s ease-in-out, visibility 0.6s;
+      overflow-y: auto;
+      padding: 2rem 1rem;
+    }
+    .slide.active {
+      opacity: 1;
+      visibility: visible;
+      z-index: 10;
+    }
+    .scrollable-container {
+      width: 100%;
+      height: 100%;
+      overflow-y: auto;
+      padding: 2rem 1rem;
+    }
+    .sticky-header {
+        position: -webkit-sticky; /* Safari */
+        position: sticky;
+        top: 0;
+        z-index: 20;
+        padding-top: 1.5rem;
+        padding-bottom: 1.5rem;
+        width: 100%;
+        background: inherit; /* 親の背景を継承 */
+    }
+    @keyframes animated-gradient {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+    }
+    .animated-gradient {
+        background-size: 200% 200%;
+        animation: animated-gradient 15s ease infinite;
+    }
+    .browser-mockup {
+        border: 1px solid #d1d5db;
+        border-radius: 0.5rem;
+        background: white;
+        box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        font-family: sans-serif;
+    }
+    .browser-body {
+        padding: 1rem;
+    }
+  </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+  <div class="relative w-screen h-screen overflow-hidden">
+    <!-- 装飾要素 -->
+    <div class="absolute top-0 right-0 w-96 h-96 rounded-full bg-lime-400 opacity-10 -translate-y-1/2 translate-x-1/2 blur-3xl"></div>
+    <div class="absolute bottom-0 left-0 w-80 h-80 rounded-full bg-cyan-400 opacity-10 translate-y-1/2 -translate-x-1/2 blur-3xl"></div>
+
+    <!-- スライドコンテナ -->
+    <div id="slide-container" class="relative w-full h-full">
+      
+      <!-- スライド1: タイトル -->
+      <div class="slide active bg-gradient-to-br from-lime-50 to-cyan-100 animated-gradient" data-slide="0">
+        <div class="text-center relative z-10 p-8">
+            <h1 class="text-5xl md:text-6xl font-bold bg-gradient-to-r from-cyan-600 to-lime-600 bg-clip-text text-transparent mb-4">第7章 SPAへの進化</h1>
+            <p class="text-xl md:text-2xl text-gray-700 mt-4">よりリッチなユーザー体験を求めて</p>
+            <p class="text-md md:text-lg text-gray-600 mt-8 max-w-3xl mx-auto">
+              従来型Webアプリケーションの課題を乗り越えるため、JavaScriptを駆使したシングルページアプリケーション（SPA）がどのようにして生まれ、発展してきたのかを解説します。
+            </p>
+        </div>
+      </div>
+
+      <!-- スライド2: 従来型Webアプリの課題 -->
+      <div class="slide bg-gradient-to-br from-red-50 to-pink-100" data-slide="1">
+        <div class="max-w-4xl mx-auto p-4 md:p-8">
+          <div class="mb-10 flex items-center gap-4">
+            <div class="p-3 rounded-full bg-pink-100"><i data-lucide="frown" class="w-6 h-6 text-pink-600"></i></div>
+            <h2 class="text-4xl font-bold">従来型Webアプリの課題</h2>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div class="bg-white/80 p-6 rounded-xl shadow-md text-center">
+              <i data-lucide="mouse-pointer-click" class="w-12 h-12 mx-auto text-red-500 mb-4"></i>
+              <h3 class="text-xl font-semibold">1. 画面遷移が多く、遅い</h3>
+              <p class="text-sm mt-2 text-gray-600">少しでも表示内容が変わるたびに、サーバーがHTML全体を再生成し、ブラウザが再描画するため、応答性が悪くなりがちでした。</p>
+            </div>
+            <div class="bg-white/80 p-6 rounded-xl shadow-md text-center">
+              <i data-lucide="server-off" class="w-12 h-12 mx-auto text-red-500 mb-4"></i>
+              <h3 class="text-xl font-semibold">2. サーバーからの通知ができない</h3>
+              <p class="text-sm mt-2 text-gray-600">HTTPはクライアントからの要求が起点のため、チャットや株価情報のように、サーバー側で起きた変化をリアルタイムに画面へ反映させることが困難でした。</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- スライド3: ブレイクスルー: Ajax -->
+      <div class="slide bg-gradient-to-br from-blue-50 to-sky-100" data-slide="2">
+        <div class="max-w-4xl mx-auto p-4 md:p-8 text-center">
+            <div class="mb-8 flex items-center justify-center gap-4">
+                <div class="p-3 rounded-full bg-sky-100"><i data-lucide="lightbulb" class="w-8 h-8 text-sky-600"></i></div>
+                <h2 class="text-4xl font-bold">ブレイクスルー: Ajax</h2>
+            </div>
+            <p class="text-lg mb-8 max-w-3xl mx-auto">2005年頃、GmailやGoogle Mapsが<strong class="text-sky-600">Ajax (Asynchronous JavaScript + XML)</strong> という技術の組み合わせを用いることで、デスクトップアプリのような滑らかな操作性をWebで実現し、衝撃を与えました。</p>
+            <div class="bg-white/80 p-8 rounded-xl shadow-lg">
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="p-4 bg-sky-50 rounded-lg">
+                  <h4 class="font-semibold text-sky-800">HTML全体の再描画をしない</h4>
+                  <p class="text-sm mt-1">JavaScriptでHTMLの一部（DOM）だけを動的に書き換える。</p>
+                </div>
+                <div class="p-4 bg-sky-50 rounded-lg">
+                  <h4 class="font-semibold text-sky-800">非同期通信</h4>
+                  <p class="text-sm mt-1">サーバーとの通信中もブラウザをブロックせず、ユーザーは操作を続けられる。</p>
+                </div>
+              </div>
+            </div>
+        </div>
+      </div>
+
+      <!-- スライド4: SPAを支える技術要素 -->
+      <div class="slide bg-gradient-to-br from-teal-50 to-cyan-100" data-slide="3">
+        <div class="max-w-5xl mx-auto p-4 md:p-8">
+            <div class="mb-8 flex items-center gap-4">
+                <div class="p-3 rounded-full bg-cyan-100"><i data-lucide="construction" class="w-6 h-6 text-cyan-600"></i></div>
+                <h2 class="text-4xl font-bold">SPAを支える技術要素</h2>
+            </div>
+            <div class="bg-white/80 p-6 rounded-xl shadow-lg flex items-center justify-center">
+                 <svg viewBox="0 0 800 450" class="w-full h-auto">
+                    <defs>
+                        <marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                            <path d="M 0 0 L 10 5 L 0 10 z" fill="#6b7280"></path>
+                        </marker>
+                    </defs>
+                    <g>
+                        <rect x="10" y="10" width="380" height="430" rx="10" fill="#f0f9ff"/>
+                        <text x="200" y="40" font-family="sans-serif" font-size="20" font-weight="bold" text-anchor="middle" fill="#0c4a6e">Webブラウザ</text>
+                    </g>
+                    <g>
+                        <rect x="410" y="10" width="380" height="430" rx="10" fill="#f5f3ff"/>
+                        <text x="600" y="40" font-family="sans-serif" font-size="20" font-weight="bold" text-anchor="middle" fill="#5b21b6">サーバサイド</text>
+                    </g>
+                    <rect x="40" y="60" width="320" height="50" rx="5" fill="#e0f2fe" />
+                    <text x="200" y="90" font-family="sans-serif" text-anchor="middle">HTML</text>
+                    <rect x="40" y="150" width="150" height="120" rx="5" fill="#e0f2fe" />
+                    <text x="115" y="180" font-family="sans-serif" text-anchor="middle">HTMLを表す</text>
+                    <text x="115" y="200" font-family="sans-serif" text-anchor="middle">データモデル</text>
+                    <text x="115" y="240" font-family="sans-serif" text-anchor="middle" font-weight="bold">Document Object Model</text>
+                    <rect x="210" y="150" width="150" height="120" rx="5" fill="#e0f2fe" />
+                    <text x="285" y="210" font-family="sans-serif" text-anchor="middle" font-weight="bold">イベント・ドリブン</text>
+                    <rect x="40" y="300" width="320" height="120" rx="5" fill="#cffafe" />
+                    <text x="200" y="360" font-family="sans-serif" font-size="30" font-weight="bold" text-anchor="middle">JavaScript</text>
+                    <rect x="440" y="300" width="320" height="120" rx="5" fill="#ede9fe" />
+                    <text x="600" y="360" font-family="sans-serif" font-size="20" font-weight="bold" text-anchor="middle">Webアプリケーション</text>
+                    <rect x="470" y="210" width="260" height="50" rx="5" fill="#f3e8ff" />
+                    <text x="600" y="240" font-family="sans-serif" text-anchor="middle" font-weight="bold">JSONによるデータ表現</text>
+                    <rect x="330" y="330" width="180" height="50" rx="5" fill="#e5e7eb" transform="rotate(-25, 420, 355)"/>
+                    <text x="420" y="360" font-family="sans-serif" text-anchor="middle" font-weight="bold" transform="rotate(-25, 420, 355)">非同期通信</text>
+                    <line x1="200" y1="110" x2="200" y2="150" stroke="#6b7280" stroke-width="2" marker-end="url(#arrow)" />
+                    <path d="M 140 270 Q 200 285 260 270" stroke="#6b7280" stroke-width="2" fill="none" marker-start="url(#arrow)" marker-end="url(#arrow)"/>
+                    <line x1="165" y1="270" x2="165" y2="300" stroke="#6b7280" stroke-width="2" marker-end="url(#arrow)" />
+                    <line x1="235" y1="270" x2="235" y2="300" stroke="#6b7280" stroke-width="2" marker-end="url(#arrow)" />
+                    <line x1="360" y1="360" x2="440" y2="360" stroke="#6b7280" stroke-width="2" marker-start="url(#arrow)" marker-end="url(#arrow)"/>
+                </svg>
+            </div>
+        </div>
+      </div>
+      
+      <!-- スライド5: JS実践(1): 基本的なDOM操作とイベント -->
+      <div class="slide bg-gradient-to-br from-lime-50 to-green-100" data-slide="4">
+        <div class="scrollable-container max-w-5xl mx-auto">
+          <div class="sticky-header bg-gradient-to-br from-lime-50 to-green-100 flex items-center gap-4">
+            <div class="p-3 rounded-full bg-green-100"><i data-lucide="play-circle" class="w-6 h-6 text-green-600"></i></div>
+            <h2 class="text-4xl font-bold">JS実践(1): 簡単な足し算アプリ</h2>
+          </div>
+          <div class="pt-6">
+            <p class="text-center mb-6">DOM操作とイベントハンドラの基本を、シンプルな足し算アプリで学びます。</p>
+            <div class="bg-white/80 p-6 rounded-xl shadow-md grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <h3 class="text-lg font-semibold text-green-800 mb-2">コード (hello-js.html)</h3>
+                <div class="code-block text-xs"><pre><code>&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;body&gt;
+  &lt;input id="arg1" oninput="calc();"&gt; + 
+  &lt;input id="arg2" oninput="calc();"&gt; = 
+  &lt;span id="result"&gt;&lt;/span&gt;
+
+  &lt;script&gt;
+    function calc() {
+      const v1 = parseInt(document.getElementById('arg1').value);
+      const v2 = parseInt(document.getElementById('arg2').value);
+      let result = "";
+      if (!isNaN(v1) && !isNaN(v2)) {
+        result = v1 + v2;
+      }
+      document.getElementById('result').innerHTML = result;
+      console.log(`calc called: ${v1} + ${v2} = ${result}`);
+    }
+  &lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre></div>
+              </div>
+              <div>
+                <h3 class="text-lg font-semibold text-green-800 mb-2">実行結果</h3>
+                <p class="text-sm mb-2">テキストボックスに数値を入力すると、`oninput`イベントが発火して`calc()`関数が実行され、結果がリアルタイムで表示されます。</p>
+                <div class="browser-mockup">
+                   <div class="browser-body">
+                       <input type="text" value="123" class="border rounded p-1 w-16"> +
+                       <input type="text" value="456" class="border rounded p-1 w-16"> =
+                       <span class="font-bold">579</span>
+                   </div>
+                </div>
+                 <h3 class="text-lg font-semibold text-green-800 mt-4 mb-2">コンソール出力</h3>
+                 <p class="text-xs mb-2">同時に、DevToolsのコンソールには`console.log`の内容が出力されます。</p>
+                 <div class="code-block text-xs bg-gray-700"><pre><code>calc called: 123 + 456 = 579</code></pre></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+       <!-- スライド6: JS実践(2): ToDoアプリのUI改善 -->
+      <div class="slide bg-gradient-to-br from-lime-50 to-green-100" data-slide="5">
+        <div class="scrollable-container max-w-5xl mx-auto">
+          <div class="sticky-header bg-gradient-to-br from-lime-50 to-green-100 flex items-center gap-4">
+            <div class="p-3 rounded-full bg-green-100"><i data-lucide="edit-3" class="w-6 h-6 text-green-600"></i></div>
+            <h2 class="text-4xl font-bold">JS実践(2): ToDoアプリのUI改善</h2>
+          </div>
+          <div class="pt-6">
+            <p class="text-center mb-6">DOM操作を応用し、ToDoアプリの項目をその場で編集できるようにします。</p>
+            <div class="bg-white/80 p-6 rounded-xl shadow-md">
+              <p class="text-sm mb-4">`setup`関数でページ上の全ToDo項目を取得し、それぞれにクリックイベントハンドラを設定します。</p>
+              <div class="code-block text-xs"><pre><code>// ページ読み込み完了時に一度だけ実行される
+function setup() {
+  // class="todo" を持つ全てのinput要素を取得
+  const elements = document.querySelectorAll('input[type="text"].todo');
+  // 各要素にイベントハンドラを設定
+  for (let i = 0; i < elements.length; i++) {
+    elements[i].addEventListener("click", onClickTodoInput);
+  }
+}
+
+// ToDo項目がクリックされた時の処理
+function onClickTodoInput(event) {
+  const todoInput = event.target;
+  todoInput.readOnly = false; // 編集可能にする
+  const todoEditorControl = todoInput.nextElementSibling;
+  todoEditorControl.classList.remove("hidden"); // save/cancelボタンを表示
+}
+
+// ページ読み込み完了時にsetup()を実行
+setup();
+</code></pre></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- スライド7: 非同期通信の進化(1): XHRとコールバック地獄 -->
+      <div class="slide bg-gradient-to-br from-indigo-50 to-purple-100" data-slide="6">
+          <div class="max-w-4xl mx-auto p-4 md:p-8">
+              <div class="mb-8 flex items-center gap-4">
+                  <div class="p-3 rounded-full bg-purple-100"><i data-lucide="hourglass" class="w-6 h-6 text-purple-600"></i></div>
+                  <h2 class="text-4xl font-bold">非同期通信の進化(1): XHR</h2>
+              </div>
+              <p class="text-center mb-4">初期のAjaxを支えたのが`XMLHttpRequest` (XHR) です。しかし、非同期処理が連続するとコードが深くネストし、読みにくくなる「コールバック地獄」という問題がありました。</p>
+              <div class="bg-white/80 p-6 rounded-xl shadow-md grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <h3 class="font-semibold text-purple-800 mb-2">XHRによる非同期通信</h3>
+                    <div class="code-block text-xs"><pre><code>function sendXhr() {
+  const xhr = new XMLHttpRequest();
+  xhr.open("GET", "/api/data");
+  // レスポンス受信時の処理を登録
+  xhr.onload = () => {
+    console.log(xhr.responseText);
+  };
+  xhr.send(); // リクエスト送信
+}</code></pre></div>
+                  </div>
+                  <div>
+                    <h3 class="font-semibold text-red-800 mb-2">コールバック地獄の例</h3>
+                     <div class="code-block text-xs"><pre><code>requestA(() => {
+  // Aの完了後
+  requestB(() => {
+    // Bの完了後
+    requestC(() => {
+      // Cの完了後
+      console.log("Done!");
+    });
+  });
+});</code></pre></div>
+                  </div>
+              </div>
+          </div>
+      </div>
+
+      <!-- スライド8: 非同期通信の進化(2): Fetch API -->
+      <div class="slide bg-gradient-to-br from-indigo-50 to-purple-100" data-slide="7">
+          <div class="max-w-4xl mx-auto p-4 md:p-8">
+              <div class="mb-8 flex items-center gap-4">
+                  <div class="p-3 rounded-full bg-purple-100"><i data-lucide="zap" class="w-6 h-6 text-purple-600"></i></div>
+                  <h2 class="text-4xl font-bold">非同期通信の進化(2): Fetch API</h2>
+              </div>
+              <p class="text-center mb-4">コールバック地獄を解決するため、<strong class="text-purple-600">Promise</strong>という概念に基づいた`Fetch API`が登場。非同期処理を鎖(チェーン)のようにつなげて、直感的に記述できるようになりました。</p>
+              <div class="bg-white/80 p-6 rounded-xl shadow-md">
+                 <h3 class="font-semibold text-purple-800 mb-2">Fetch APIによるGETリクエスト</h3>
+                 <div class="code-block text-sm"><pre><code>fetch("/api/data")
+  .then(response => response.json()) // ①レスポンスをJSONとして解析
+  .then(data => {                   // ②解析後のデータを処理
+    console.log(data);
+  })
+  .catch(error => {                 // ③エラー処理
+    console.error("Fetch error:", error);
+  });
+</code></pre></div>
+              </div>
+          </div>
+      </div>
+      
+      <!-- スライド9: JS実践(3): FetchとJSONによるデータ連携 -->
+      <div class="slide bg-gradient-to-br from-gray-100 to-slate-200" data-slide="8">
+        <div class="scrollable-container max-w-6xl mx-auto">
+          <div class="sticky-header bg-gradient-to-br from-gray-100 to-slate-200 flex items-center gap-4">
+            <div class="p-3 rounded-full bg-slate-200"><i data-lucide="repeat" class="w-6 h-6 text-slate-700"></i></div>
+            <h2 class="text-4xl font-bold">JS実践(3): FetchとJSONによる連携</h2>
+          </div>
+          <div class="pt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="bg-white/80 p-4 rounded-xl shadow-md">
+              <h3 class="text-lg font-semibold text-slate-800 mb-2">クライアントサイド (JavaScript)</h3>
+              <p class="text-xs mb-2">入力されたToDoをJSON形式に変換し、POSTリクエストで送信します。</p>
+              <div class="code-block text-xs"><pre><code>function onClickAddButton() {
+  const addInput = document.getElementById("new-todo");
+  if (addInput.value.trim() === "") return;
+
+  const request = {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ todo: addInput.value }),
+  };
+
+  fetch("/add", request)
+    .then(response => response.json())
+    .then(data => {
+      addTodoItem(data); // サーバから返されたIDでDOMを更新
+    });
+}</code></pre></div>
+            </div>
+            <div class="bg-white/80 p-4 rounded-xl shadow-md">
+              <h3 class="text-lg font-semibold text-slate-800 mb-2">サーバーサイド (Go)</h3>
+              <p class="text-xs mb-2">受け取ったJSONを解析し、IDを採番して保存。登録後のデータをJSONで返します。</p>
+              <div class="code-block text-xs"><pre><code>func handleAdd(w http.ResponseWriter, r *http.Request) {
+  // ... (セッション・認証チェック) ...
+
+  // リクエストボディのJSONをパース
+  body, _ := io.ReadAll(r.Body)
+  item := NewToDoItemFromJson(string(body))
+
+  // ToDoをリストに追加
+  if item.Todo != "" {
+    item = session.UserAccount.ToDoList.Append(item.Todo)
+  }
+
+  // 結果をJSONで返す
+  w.Header().Set("Content-Type", "application/json")
+  json.NewEncoder(w).Encode(item)
+}</code></pre></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- スライド10: JS実践(4): History APIによるルーティング -->
+       <div class="slide bg-gradient-to-br from-amber-50 to-orange-100" data-slide="9">
+        <div class="scrollable-container max-w-5xl mx-auto">
+          <div class="sticky-header bg-gradient-to-br from-amber-50 to-orange-100 flex items-center gap-4">
+            <div class="p-3 rounded-full bg-orange-100"><i data-lucide="route" class="w-6 h-6 text-orange-600"></i></div>
+            <h2 class="text-4xl font-bold">JS実践(4): History API ルーティング</h2>
+          </div>
+          <div class="pt-6">
+            <p class="text-center mb-6">History APIを使い、ブラウザのデフォルト画面遷移を乗っ取ってSPA内でのページ切り替えを実現します。</p>
+            <div class="bg-white/80 p-6 rounded-xl shadow-md">
+              <div class="code-block text-xs"><pre><code>// aタグのクリックイベントを捕捉
+document.querySelector('nav a').addEventListener("click", (e) => {
+  // ① 本来のページ遷移をキャンセル
+  e.preventDefault();
+  
+  // ② 表示内容をJSで切り替え、URLを擬似的に変更
+  route(e.target.pathname, true);
+});
+
+// URLのパスに応じて表示を切り替える関数
+function route(path, pushState) {
+  switch (path) {
+    case "/page1": showContent("Page1 content"); break;
+    // ...
+  }
+  if (pushState) {
+    // ③ History APIでブラウザの履歴とURLを更新
+    history.pushState(null, "", path);
+  }
+}
+
+// ブラウザの「戻る」ボタンが押された際のイベントを捕捉
+window.addEventListener("popstate", () => {
+  route(location.pathname, false);
+});</code></pre></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- スライド11: SPAの課題とSSR -->
+      <div class="slide bg-gradient-to-br from-gray-200 to-slate-300" data-slide="10">
+        <div class="max-w-4xl mx-auto p-4 md:p-8 text-center">
+            <div class="mb-8 flex items-center justify-center gap-4">
+                <div class="p-3 rounded-full bg-slate-300"><i data-lucide="search-slash" class="w-8 h-8 text-slate-600"></i></div>
+                <h2 class="text-4xl font-bold">SPAの新たな課題とSSR</h2>
+            </div>
+            <p class="text-lg mb-8 max-w-3xl mx-auto">SPAは快適なUIを実現しましたが、新たな課題も生みました。</p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div class="bg-white/80 p-4 rounded-xl shadow-md border-l-4 border-red-400">
+                <h3 class="font-semibold mb-2">課題</h3>
+                <ul class="list-disc list-inside text-sm space-y-2">
+                  <li><strong>SEOとの相性:</strong> 初期HTMLが空のため、検索エンジンが内容を認識しづらい。</li>
+                  <li><strong>初期表示の遅さ:</strong> 大量のJSを読み込み、API通信を経てから描画するため、最初の表示に時間がかかる。</li>
+                </ul>
+              </div>
+              <div class="bg-white/80 p-4 rounded-xl shadow-md border-l-4 border-green-400">
+                <h3 class="font-semibold mb-2">解決策: SSR</h3>
+                <p class="text-sm"><strong class="text-green-700">サーバーサイドレンダリング (SSR)</strong> は、初回のアクセス時にサーバー側でHTMLを生成して返す手法。これにより、上記２つの課題を解決します。</p>
+              </div>
+            </div>
+        </div>
+      </div>
+      
+      <!-- スライド12: まとめ -->
+      <div class="slide bg-gradient-to-br from-emerald-50 to-teal-100" data-slide="11">
+          <div class="max-w-4xl mx-auto text-center p-4 md:p-8">
+              <h2 class="text-4xl font-bold mb-10">第7章のまとめ</h2>
+              <div class="space-y-6 text-left bg-white/80 p-8 rounded-xl shadow-lg">
+                  <div class="flex items-start gap-4">
+                      <i data-lucide="blinds" class="w-10 h-10 text-teal-600 mt-1"></i>
+                      <p><strong>SPAの誕生:</strong> 従来型アプリの「遅さ」を克服するため、JavaScriptによる<strong>DOM操作</strong>と<strong>非同期通信 (Ajax)</strong> を活用し、ページ遷移なしに画面を更新するSPAが登場した。</p>
+                  </div>
+                  <div class="flex items-start gap-4">
+                      <i data-lucide="code-json" class="w-10 h-10 text-teal-600 mt-1"></i>
+                      <p><strong>役割分担の変化:</strong> サーバーはHTMLではなく<strong>JSON</strong>形式のデータを返し、クライアント側のJavaScriptがそれを受け取って画面を描画する役割を担うようになった。</p>
+                  </div>
+                  <div class="flex items-start gap-4">
+                      <i data-lucide="route" class="w-10 h-10 text-teal-600 mt-1"></i>
+                      <p><strong>SPAの成熟:</strong> ブックマーク等の課題を<strong>History API</strong>によるルーティングで解決。さらにSEOや初期表示速度の問題を、<strong>サーバーサイドレンダリング(SSR)</strong>という従来型への回帰ともいえる手法で克服し、進化を続けている。</p>
+                  </div>
+              </div>
+          </div>
+      </div>
+      
+    </div>
+
+    <!-- ナビゲーション -->
+    <div class="absolute bottom-8 right-8 flex gap-4 z-50">
+      <button id="prev-btn" class="w-12 h-12 rounded-full bg-white/90 shadow-lg flex items-center justify-center text-gray-700 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition-all">
+        <i data-lucide="chevron-left" class="w-6 h-6"></i>
+      </button>
+      <button id="next-btn" class="w-12 h-12 rounded-full bg-white/90 shadow-lg flex items-center justify-center text-gray-700 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition-all">
+        <i data-lucide="chevron-right" class="w-6 h-6"></i>
+      </button>
+    </div>
+
+    <!-- プログレスバー -->
+    <div class="absolute bottom-0 left-0 right-0 h-1 bg-gray-200 z-50">
+      <div id="progress-bar" class="h-full bg-cyan-500 transition-all duration-300 ease-in-out"></div>
+    </div>
+
+    <!-- スライド番号 -->
+    <div class="absolute bottom-8 left-8 text-sm font-medium text-gray-600 z-50">
+      <span id="current-slide">1</span> / <span id="total-slides">12</span>
+    </div>
+  </div>
+
+  <script>
+    // スライドナビゲーションのスクリプト
+    document.addEventListener('DOMContentLoaded', () => {
+      lucide.createIcons();
+
+      const slides = document.querySelectorAll('.slide');
+      const prevBtn = document.getElementById('prev-btn');
+      const nextBtn = document.getElementById('next-btn');
+      const currentSlideEl = document.getElementById('current-slide');
+      const totalSlidesEl = document.getElementById('total-slides');
+      const progressBar = document.getElementById('progress-bar');
+      
+      const totalSlides = slides.length;
+      totalSlidesEl.textContent = totalSlides;
+      
+      let currentSlide = 0;
+
+      function updateSlide() {
+        slides.forEach((slide, index) => {
+          const scrollable = slide.querySelector('.scrollable-container');
+          if (index === currentSlide) {
+            slide.classList.add('active');
+            if (scrollable) scrollable.scrollTop = 0;
+          } else {
+            slide.classList.remove('active');
+          }
+        });
+        
+        currentSlideEl.textContent = currentSlide + 1;
+        
+        const progressPercentage = ((currentSlide + 1) / totalSlides) * 100;
+        progressBar.style.width = `${progressPercentage}%`;
+        
+        prevBtn.disabled = currentSlide === 0;
+        nextBtn.disabled = currentSlide === totalSlides - 1;
+      }
+
+      function handleNext(e) {
+        e.preventDefault(); 
+        if (currentSlide < totalSlides - 1) {
+          currentSlide++;
+          updateSlide();
+        }
+      }
+
+      function handlePrev(e) {
+        e.preventDefault();
+        if (currentSlide > 0) {
+          currentSlide--;
+          updateSlide();
+        }
+      }
+
+      nextBtn.addEventListener('click', handleNext);
+      prevBtn.addEventListener('click', handlePrev);
+      
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight' && !nextBtn.disabled) {
+          handleNext(e);
+        } else if (e.key === 'ArrowLeft' && !prevBtn.disabled) {
+          handlePrev(e);
+        }
+      });
+
+      updateSlide();
+    });
+  </script>
+</body>
+</html>

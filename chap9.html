@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>第9章 サーバプッシュ技術</title>
+  <meta name="description" content="PDF「第9章 サーバプッシュ技術」の要約スライド">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+  
+  <style>
+    /* 既存のスライドデザインを忠実に再現するためのスタイル */
+    body { 
+      font-family: 'Inter', 'Noto Sans JP', sans-serif; 
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+    .code-block {
+      background-color: #1e293b; /* slate-800 */
+      color: #e2e8f0; /* slate-200 */
+      padding: 1rem;
+      border-radius: 0.5rem;
+      font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
+      font-size: 0.875rem;
+      line-height: 1.6;
+      overflow-x: auto;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+    }
+    .slide {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.6s ease-in-out, visibility 0.6s;
+      overflow-y: auto;
+      padding: 2rem 1rem;
+    }
+    .slide.active {
+      opacity: 1;
+      visibility: visible;
+      z-index: 10;
+    }
+    .scrollable-container {
+      width: 100%;
+      height: 100%;
+      overflow-y: auto;
+      padding: 2rem 1rem;
+    }
+    .sticky-header {
+        position: -webkit-sticky; /* Safari */
+        position: sticky;
+        top: 0;
+        z-index: 20;
+        padding-top: 1.5rem;
+        padding-bottom: 1.5rem;
+        width: 100%;
+        background: inherit; /* 親の背景を継承 */
+    }
+    @keyframes animated-gradient {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+    }
+    .animated-gradient {
+        background-size: 200% 200%;
+        animation: animated-gradient 15s ease infinite;
+    }
+    .devtools-mockup {
+      border: 1px solid #d1d5db;
+      border-radius: 0.5rem;
+      background: #f9fafb;
+      box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+      font-family: monospace;
+      font-size: 0.75rem;
+      line-height: 1.4;
+    }
+    .devtools-header {
+      padding: 0.5rem;
+      border-bottom: 1px solid #d1d5db;
+      color: #4b5563;
+    }
+    .devtools-body {
+      padding: 0.5rem;
+      overflow-x: auto;
+      color: #1f2937;
+    }
+    .header-name { color: #9ca3af; }
+    .header-value { color: #374151; }
+  </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+  <div class="relative w-screen h-screen overflow-hidden">
+    <div class="absolute top-0 right-0 w-96 h-96 rounded-full bg-blue-400 opacity-10 -translate-y-1/2 translate-x-1/2 blur-3xl"></div>
+    <div class="absolute bottom-0 left-0 w-80 h-80 rounded-full bg-red-400 opacity-10 translate-y-1/2 -translate-x-1/2 blur-3xl"></div>
+
+    <div id="slide-container" class="relative w-full h-full">
+      
+      <div class="slide active bg-gradient-to-br from-blue-50 to-red-100 animated-gradient" data-slide="0">
+        <div class="text-center relative z-10 p-8">
+            <h1 class="text-5xl md:text-6xl font-bold bg-gradient-to-r from-red-600 to-blue-600 bg-clip-text text-transparent mb-4">第9章 サーバプッシュ技術</h1>
+            <p class="text-xl md:text-2xl text-gray-700 mt-4">リアルタイムWebの実現</p>
+            <p class="text-md md:text-lg text-gray-600 mt-8 max-w-3xl mx-auto">
+              HTTPの「Pull型通信」の制約を乗り越え、サーバーからクライアントへ情報を能動的に送信する「プッシュ技術」の進化の歴史と仕組みを解説します。
+            </p>
+        </div>
+      </div>
+
+      <div class="slide bg-gradient-to-br from-gray-100 to-slate-200" data-slide="1">
+        <div class="max-w-4xl mx-auto p-4 md:p-8">
+            <div class="mb-10 flex items-center gap-4">
+                <div class="p-3 rounded-full bg-slate-200"><i data-lucide="cloud-hail" class="w-6 h-6 text-slate-700"></i></div>
+                <h2 class="text-4xl font-bold">なぜサーバプッシュが必要か？</h2>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="bg-white/80 p-6 rounded-xl shadow-md text-center">
+                    <i data-lucide="arrow-down-up" class="w-12 h-12 mx-auto text-gray-500 mb-4"></i>
+                    <h3 class="text-xl font-semibold">Pull型通信の限界</h3>
+                    <p class="text-sm mt-2 text-gray-600">HTTPの基本はクライアントが要求(Pull)してサーバーが応答するモデル。これだけでは、チャットや株価情報のように、<strong class="text-slate-600">サーバー側で起きた変化をリアルタイムにクライアントに通知できません。</strong></p>
+                </div>
+                <div class="bg-white/80 p-6 rounded-xl shadow-md text-center">
+                    <i data-lucide="send" class="w-12 h-12 mx-auto text-blue-500 mb-4"></i>
+                    <h3 class="text-xl font-semibold">Push型通信への要求</h3>
+                    <p class="text-sm mt-2 text-gray-600">Webアプリケーションのリッチ化に伴い、サーバー側から能動的に情報を送信(Push)する技術が求められるようになりました。</p>
+                </div>
+            </div>
+        </div>
+      </div>
+      
+      <div class="slide bg-gradient-to-br from-orange-50 to-amber-100" data-slide="2">
+        <div class="scrollable-container max-w-5xl mx-auto">
+          <div class="sticky-header bg-gradient-to-br from-orange-50 to-amber-100 flex items-center gap-4">
+            <div class="p-3 rounded-full bg-amber-100"><i data-lucide="trending-up" class="w-6 h-6 text-amber-600"></i></div>
+            <h2 class="text-4xl font-bold">サーバプッシュ技術の進化</h2>
+          </div>
+          <div class="pt-6 space-y-4">
+             <div class="bg-white/80 p-4 rounded-xl shadow-md">
+                <h4 class="font-semibold text-amber-800">黎明期: 擬似的なプッシュ</h4>
+                <p class="text-xs text-gray-600 mt-1">HTTPの枠組み内で、クライアントから定期的に問い合わせる「ハック」で擬似的なプッシュを実現。</p>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-2 mt-2">
+                  <div class="bg-amber-50 p-2 rounded"><strong>メタリフレッシュ:</strong> <br><code class="text-xs">&lt;meta http-equiv="refresh" content="10"&gt;</code></div>
+                  <div class="bg-amber-50 p-2 rounded"><strong>Ajaxポーリング:</strong> <br><code class="text-xs">setInterval(() => fetch(...), 5000)</code></div>
+                  <div class="bg-amber-50 p-2 rounded"><strong>ロングポーリング (Comet):</strong> サーバーが応答を保留する。</div>
+                </div>
+            </div>
+             <div class="text-center ml-16"><i data-lucide="arrow-down" class="w-6 h-6 text-gray-400"></i></div>
+            <div class="flex items-center gap-4">
+                <div class="w-32 text-right font-bold text-gray-500">標準化</div>
+                <div class="flex-1 space-y-2">
+                   <div class="bg-white/80 p-4 rounded-xl shadow-md">
+                        <h4 class="font-semibold text-amber-800">Server-sent Events (SSE)</h4>
+                        <p class="text-xs text-gray-600 mt-1">サーバーからクライアントへの<strong class="text-amber-700">片方向</strong>のプッシュ通信を標準化。</p>
+                    </div>
+                     <div class="bg-white/80 p-4 rounded-xl shadow-md">
+                        <h4 class="font-semibold text-amber-800">WebSocket</h4>
+                        <p class="text-xs text-gray-600 mt-1">HTTPとは別のプロトコルとして、低オーバーヘッドな<strong class="text-amber-700">双方向</strong>通信を標準化。</p>
+                    </div>
+                </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="slide bg-gradient-to-br from-gray-100 to-slate-200" data-slide="3">
+        <div class="max-w-4xl mx-auto p-4 md:p-8">
+            <div class="mb-8 flex items-center gap-4">
+                <div class="p-3 rounded-full bg-slate-200"><i data-lucide="timer" class="w-6 h-6 text-slate-700"></i></div>
+                <h2 class="text-4xl font-bold">Comet (ロングポーリング)</h2>
+            </div>
+            <p class="text-center mb-6">クライアントからのリクエストに対し、サーバーが意図的にレスポンスを保留し、通知すべき情報が発生したタイミングで応答を返すハック的な手法です。</p>
+            <div class="bg-white/80 p-6 rounded-xl shadow-lg">
+                <svg viewBox="0 0 400 250" class="w-full h-auto">
+                   <defs><marker id="arrow-gray" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="4" markerHeight="4" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#6b7280"></path></marker></defs>
+                   <line x1="50" y1="20" x2="50" y2="230" stroke="#a1a1aa" stroke-width="2"/>
+                   <line x1="350" y1="20" x2="350" y2="230" stroke="#a1a1aa" stroke-width="2"/>
+                   <text x="50" y="15" text-anchor="middle" font-size="12">ブラウザ</text>
+                   <text x="350" y="15" text-anchor="middle" font-size="12">Webサーバ</text>
+                   <path d="M 55 40 H 345" stroke="#4f46e5" stroke-width="2" marker-end="url(#arrow-gray)"/>
+                   <text x="200" y="35" text-anchor="middle" font-size="10">GETリクエスト</text>
+                   <text x="350" y="70" text-anchor="end" font-size="10" fill="#4f46e5">すぐにレスポンスを返さない</text>
+                   <path d="M 345 100 H 55" stroke="#4f46e5" stroke-width="2" stroke-dasharray="4" marker-end="url(#arrow-gray)"/>
+                   <text x="200" y="95" text-anchor="middle" font-size="10">レスポンス</text>
+                   <circle cx="350" cy="100" r="3" fill="#f59e0b" />
+                   <text x="350" y="115" text-anchor="end" font-size="10" fill="#f59e0b">イベント発生で応答</text>
+                   
+                   <path d="M 55 130 H 345" stroke="#4f46e5" stroke-width="2" marker-end="url(#arrow-gray)"/>
+                   <text x="200" y="125" text-anchor="middle" font-size="10">GETリクエスト</text>
+                   <text x="50" y="115" text-anchor="start" font-size="10" fill="#4f46e5">応答後すぐ再リクエスト</text>
+                   <path d="M 345 190 H 55" stroke="#4f46e5" stroke-width="2" stroke-dasharray="4" marker-end="url(#arrow-gray)"/>
+                   <text x="200" y="185" text-anchor="middle" font-size="10">レスポンス</text>
+                   <circle cx="350" cy="190" r="3" fill="#f59e0b" />
+                </svg>
+            </div>
+        </div>
+      </div>
+      
+      <div class="slide bg-gradient-to-br from-blue-50 to-cyan-100" data-slide="4">
+        <div class="scrollable-container max-w-5xl mx-auto">
+          <div class="sticky-header bg-gradient-to-br from-blue-50 to-cyan-100 flex items-center gap-4">
+            <div class="p-3 rounded-full bg-cyan-100"><i data-lucide="rss" class="w-6 h-6 text-cyan-600"></i></div>
+            <h2 class="text-4xl font-bold">Server-sent Events (SSE)</h2>
+          </div>
+          <div class="pt-6">
+            <p class="text-center mb-6">Cometの考え方を発展させ、HTTPストリーミングをベースに標準化された技術。一度の接続で、サーバーから継続的にイベントを送信できます。</p>
+            <div class="bg-white/80 p-6 rounded-xl shadow-md grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <h3 class="font-semibold text-cyan-800 mb-2">サーバーからの応答形式</h3>
+                <p class="text-xs mb-2">`Content-Type: text/event-stream`ヘッダを返し、`id`, `event`, `data`といった形式でイベントをチャンク送信します。</p>
+                <div class="code-block text-xs"><pre><code>HTTP/1.1 200 OK
+Content-Type: text/event-stream
+Transfer-Encoding: chunked
+
+id: event-1
+event: add
+data: {"id":"abc", "todo":"タスク1"}
+
+id: event-2
+event: update
+data: {"id":"xyz", "todo":"タスク2"}
+...
+</code></pre></div>
+              </div>
+              <div>
+                <h3 class="font-semibold text-cyan-800 mb-2">クライアント側の実装</h3>
+                <p class="text-xs mb-2">`EventSource` APIを使い、イベント名ごとのハンドラを登録するだけで、簡単にイベントを受信できます。</p>
+                 <div class="code-block text-xs"><pre><code>const eventSource = new EventSource("/observe");
+
+// "add" イベントのリスナー
+eventSource.addEventListener("add", (e) => {
+  const data = JSON.parse(e.data);
+  // DOMを更新して新しいToDoを表示
+});
+
+// "update" イベントのリスナー
+eventSource.addEventListener("update", (e) => {
+  const data = JSON.parse(e.data);
+  // DOMを更新してToDoを更新
+});
+</code></pre></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="slide bg-gradient-to-br from-blue-50 to-cyan-100" data-slide="5">
+          <div class="scrollable-container max-w-4xl mx-auto">
+              <div class="sticky-header bg-gradient-to-br from-blue-50 to-cyan-100 flex items-center gap-4">
+                  <div class="p-3 rounded-full bg-cyan-100"><i data-lucide="file-code-2" class="w-6 h-6 text-cyan-600"></i></div>
+                  <h2 class="text-4xl font-bold">SSEサーバー実装 (Go)</h2>
+              </div>
+              <div class="pt-6">
+                  <p class="text-center mb-6">サーバー側は、Goの「チャネル」という並行処理機能を使って、複数のクライアントに同時にイベントを通知します。</p>
+                  <div class="bg-white/80 p-6 rounded-xl shadow-md">
+                    <h3 class="font-semibold text-cyan-800 mb-2">イベント通知の仕組み</h3>
+                    <ul class="list-disc list-inside text-sm mb-4">
+                      <li>ToDoが追加/更新されると、その情報がチャネルに送られる。</li>
+                      <li>各クライアント接続(goroutine)は、そのチャネルを監視。</li>
+                      <li>情報を受け取ると、SSE形式でクライアントに書き込む。</li>
+                    </ul>
+                    <div class="code-block text-xs"><pre><code>// /observe のハンドラ
+func observeTodo(w http.ResponseWriter, r *http.Request, session *HttpSession) {
+    // ...
+    // この接続用の通知チャネルを作成
+    eventReceiver := todoList.ChangeNotifier.CreateObserver()
+    defer todoList.ChangeNotifier.RemoveObserver(eventReceiver)
+    
+    // ... initialイベント送信 ...
+    
+    for { // 接続が切れるまでループ
+        select {
+        case ev := <-eventReceiver: // チャネルから通知を受信
+            sse := ev.NewServerSentEvent()
+            sse.Send(w) // SSEとしてクライアントに送信
+        case <-r.Context().Done(): // 接続断を検知
+            return
+        }
+    }
+}</code></pre></div>
+                  </div>
+              </div>
+          </div>
+      </div>
+
+      <div class="slide bg-gradient-to-br from-blue-50 to-cyan-100" data-slide="6">
+          <div class="scrollable-container max-w-4xl mx-auto">
+              <div class="sticky-header bg-gradient-to-br from-blue-50 to-cyan-100 flex items-center gap-4">
+                  <div class="p-3 rounded-full bg-cyan-100"><i data-lucide="search-check" class="w-6 h-6 text-cyan-600"></i></div>
+                  <h2 class="text-4xl font-bold">実践: SSEの動作確認 (DevTools)</h2>
+              </div>
+              <div class="pt-6">
+                   <div class="bg-white/80 p-6 rounded-xl shadow-md space-y-4">
+                    <h3 class="text-lg font-semibold text-cyan-800 mb-2">Networkパネル</h3>
+                    <p class="text-sm">/observeリクエストのTypeが`eventsource`になっていることを確認できます。</p>
+                    <h3 class="text-lg font-semibold text-cyan-800 mt-4 mb-2">EventStreamタブ</h3>
+                    <p class="text-sm">受信したイベントの履歴がリアルタイムに表示されます。`Data`列でJSONの内容を確認できます。</p>
+                     <div class="code-block text-xs"><pre><code>Id                          Type      Data
+ttd-1728175661547591        add       {"source":"...", "todoItem":{...}}
+ttd-1728175649786472        initial   {"source":"..."}
+</code></pre></div>
+                  </div>
+              </div>
+          </div>
+      </div>
+      
+      <div class="slide bg-gradient-to-br from-purple-50 to-indigo-100" data-slide="7">
+        <div class="max-w-4xl mx-auto p-4 md:p-8">
+            <div class="mb-8 flex items-center gap-4">
+                <div class="p-3 rounded-full bg-indigo-100"><i data-lucide="cable" class="w-6 h-6 text-indigo-600"></i></div>
+                <h2 class="text-4xl font-bold">WebSocket: 真の双方向通信</h2>
+            </div>
+            <p class="text-center mb-6">チャットやオンラインゲームなど、より高頻度・低遅延な<strong class="text-indigo-600">双方向通信</strong>を実現するため、HTTPとは別のプロトコルとして設計されました。</p>
+            <div class="bg-white/80 p-6 rounded-xl shadow-md">
+                <h3 class="font-semibold text-lg mb-4 text-indigo-800">プロトコルアップグレードによる接続</h3>
+                <p class="text-sm mb-2">最初は通常のHTTPリクエストとして通信を開始し、ヘッダを使って「ここからWebSocketで話しましょう」と合意することでプロトコルを切り替えます。</p>
+                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                     <div class="code-block text-xs">
+                         <p class="text-gray-400">// ① クライアントからのアップグレード要求</p>
+                         <p>GET /chat HTTP/1.1</p>
+                         <p>Upgrade: websocket</p>
+                         <p>Connection: Upgrade</p>
+                         <p>Sec-WebSocket-Key: ...</p>
+                     </div>
+                     <div class="code-block text-xs">
+                         <p class="text-gray-400">// ② サーバーからの承諾</p>
+                         <p>HTTP/1.1 101 Switching Protocols</p>
+                         <p>Upgrade: websocket</p>
+                         <p>Connection: Upgrade</p>
+                         <p>Sec-WebSocket-Accept: ...</p>
+                     </div>
+                 </div>
+            </div>
+        </div>
+      </div>
+      
+      <div class="slide bg-gradient-to-br from-purple-50 to-indigo-100" data-slide="8">
+        <div class="scrollable-container max-w-5xl mx-auto">
+          <div class="sticky-header bg-gradient-to-br from-purple-50 to-indigo-100 flex items-center gap-4">
+            <div class="p-3 rounded-full bg-indigo-100"><i data-lucide="file-code-2" class="w-6 h-6 text-indigo-600"></i></div>
+            <h2 class="text-4xl font-bold">WebSocketの実装例</h2>
+          </div>
+          <div class="pt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+             <div class="bg-white/80 p-4 rounded-xl shadow-md">
+                <h3 class="text-lg font-semibold text-indigo-800 mb-2">クライアント側 (JavaScript)</h3>
+                <p class="text-xs mb-2">`WebSocket`オブジェクトを生成し、`onmessage`イベントハンドラでサーバーからのメッセージを受信します。</p>
+                <div class="code-block text-xs"><pre><code>const ws = new WebSocket("wss://.../observe");
+
+ws.onmessage = function(event) {
+  const message = JSON.parse(event.data);
+  // ... 受信したメッセージに応じてDOMを更新 ...
+};
+
+// クライアントから送信する場合は ws.send() を使う
+// ws.send(JSON.stringify({ event: "message", ... }));
+</code></pre></div>
+             </div>
+             <div class="bg-white/80 p-4 rounded-xl shadow-md">
+                <h3 class="text-lg font-semibold text-indigo-800 mb-2">サーバー側 (Go)</h3>
+                <p class="text-xs mb-2">HTTPリクエストをWebSocket接続にアップグレードし、以降はその接続を通じてメッセージを送受信します。</p>
+                <div class="code-block text-xs"><pre><code>var upgrader = websocket.Upgrader{} 
+
+func handleObserve(w http.ResponseWriter, r *http.Request) {
+  // ... 認証処理 ...
+  
+  // HTTP接続をWebSocket接続にアップグレード
+  conn, err := upgrader.Upgrade(w, r, nil)
+  if err != nil { return }
+  defer conn.Close()
+
+  // 以降、conn.WriteMessage() や conn.ReadMessage() で送受信
+  // ...
+}</code></pre></div>
+             </div>
+          </div>
+        </div>
+      </div>
+
+       <div class="slide bg-gradient-to-br from-gray-100 to-slate-200" data-slide="9">
+        <div class="scrollable-container max-w-4xl mx-auto">
+          <div class="sticky-header bg-gradient-to-br from-gray-100 to-slate-200 flex items-center gap-4">
+            <div class="p-3 rounded-full bg-slate-200"><i data-lucide="search-check" class="w-6 h-6 text-slate-700"></i></div>
+            <h2 class="text-4xl font-bold">実践: WebSocket通信の確認</h2>
+          </div>
+          <div class="pt-6">
+            <div class="bg-white/80 p-6 rounded-xl shadow-md space-y-4">
+              <div>
+                <h3 class="text-lg font-semibold text-slate-800 mb-2">1. ハンドシェイクの確認</h3>
+                <p class="text-sm">最初の`GET`リクエストで、ステータスコードが`101 Switching Protocols`になっていることを確認します。`Upgrade: websocket`ヘッダなども見られます。</p>
+              </div>
+              <div>
+                <h3 class="text-lg font-semibold text-slate-800 mt-4 mb-2">2. メッセージの確認</h3>
+                <p class="text-sm">リクエスト詳細の`Messages`タブに切り替えると、送受信されたメッセージの履歴（データフレーム）がリアルタイムで表示されます。</p>
+                <div class="code-block text-sm">
+                  <pre><code><span class="text-green-400">&uarr; {"event":"add", "data":{...}}</span>
+<span class="text-green-400">&uarr; {"event":"update", "data":{...}}</span></code></pre>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="slide bg-gradient-to-br from-red-50 to-pink-100" data-slide="10">
+        <div class="max-w-5xl mx-auto p-4 md:p-8">
+            <div class="mb-8 flex items-center gap-4">
+                <div class="p-3 rounded-full bg-pink-100"><i data-lucide="shield-alert" class="w-6 h-6 text-pink-600"></i></div>
+                <h2 class="text-4xl font-bold">WebSocketのセキュリティ課題</h2>
+            </div>
+            <p class="text-center text-lg mb-6">WebSocketには同一オリジンポリシーが適用されないため、<strong class="text-red-700">CSWSH (Cross-Site WebSocket Hijacking)</strong> という脆弱性が存在します。</p>
+            <div class="bg-white/80 p-6 rounded-xl shadow-lg">
+                <p class="text-sm mb-4">対策として、サーバー側でハンドシェイクリクエストの`Origin`ヘッダを検証し、意図しないドメインからの接続を拒否することが不可欠です。</p>
+                 <div class="code-block text-xs"><pre><code># 攻撃者はOriginヘッダを偽装して接続を試みる
+$ curl -i -N \
+  -H "Origin: https://evil.example.com" \
+  -H "Connection: Upgrade" \
+  -H "Upgrade: websocket" \
+  -H "Sec-WebSocket-Version: 13" \
+  -H "Sec-WebSocket-Key: ..." \
+  "https://tinytodo.example.jp/observe"
+
+# サーバーはOriginを検証し、403 Forbiddenを返す
+HTTP/1.1 403 Forbidden
+...
+</code></pre></div>
+            </div>
+        </div>
+      </div>
+
+      <div class="slide bg-gradient-to-br from-emerald-50 to-teal-100" data-slide="11">
+          <div class="max-w-4xl mx-auto text-center p-4 md:p-8">
+              <h2 class="text-4xl font-bold mb-10">第9章のまとめ</h2>
+              <div class="space-y-6 text-left bg-white/80 p-8 rounded-xl shadow-lg">
+                  <div class="flex items-start gap-4">
+                      <i data-lucide="clock-rewind" class="w-10 h-10 text-teal-600 mt-1"></i>
+                      <p><strong>プッシュ技術の黎明期:</strong> HTTPの制約内でサーバーからの通知を実現するため、ポーリングや<strong class="text-teal-700">Comet (ロングポーリング)</strong> といった工夫が生まれた。</p>
+                  </div>
+                  <div class="flex items-start gap-4">
+                      <i data-lucide="radio-tower" class="w-10 h-10 text-teal-600 mt-1"></i>
+                      <p><strong>標準化された片方向プッシュ (SSE):</strong> <strong class="text-teal-700">Server-sent Events</strong>は、HTTPストリーミングを基に、サーバーからクライアントへの効率的な片方向通信を標準APIとして提供した。</p>
+                  </div>
+                  <div class="flex items-start gap-4">
+                      <i data-lucide="repeat-2" class="w-10 h-10 text-teal-600 mt-1"></i>
+                      <p><strong>真の双方向通信 (WebSocket):</strong> <strong class="text-teal-700">WebSocket</strong>は、HTTPとは別のプロトコルとして、低オーバーヘッドでリアルタイムな双方向通信を実現し、チャットやゲームなどの高度なアプリを可能にした。</p>
+                  </div>
+              </div>
+          </div>
+      </div>
+      
+    </div>
+
+    <div class="absolute bottom-8 right-8 flex gap-4 z-50">
+      <button id="prev-btn" class="w-12 h-12 rounded-full bg-white/90 shadow-lg flex items-center justify-center text-gray-700 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition-all">
+        <i data-lucide="chevron-left" class="w-6 h-6"></i>
+      </button>
+      <button id="next-btn" class="w-12 h-12 rounded-full bg-white/90 shadow-lg flex items-center justify-center text-gray-700 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition-all">
+        <i data-lucide="chevron-right" class="w-6 h-6"></i>
+      </button>
+    </div>
+
+    <div class="absolute bottom-0 left-0 right-0 h-1 bg-gray-200 z-50">
+      <div id="progress-bar" class="h-full bg-blue-500 transition-all duration-300 ease-in-out"></div>
+    </div>
+
+    <div class="absolute bottom-8 left-8 text-sm font-medium text-gray-600 z-50">
+      <span id="current-slide">1</span> / <span id="total-slides">12</span>
+    </div>
+  </div>
+
+  <script>
+    // スライドナビゲーションのスクリプト
+    document.addEventListener('DOMContentLoaded', () => {
+      lucide.createIcons();
+
+      const slides = document.querySelectorAll('.slide');
+      const prevBtn = document.getElementById('prev-btn');
+      const nextBtn = document.getElementById('next-btn');
+      const currentSlideEl = document.getElementById('current-slide');
+      const totalSlidesEl = document.getElementById('total-slides');
+      const progressBar = document.getElementById('progress-bar');
+      
+      const totalSlides = slides.length;
+      totalSlidesEl.textContent = totalSlides;
+      
+      let currentSlide = 0;
+
+      function updateSlide() {
+        slides.forEach((slide, index) => {
+          const scrollable = slide.querySelector('.scrollable-container');
+          if (index === currentSlide) {
+            slide.classList.add('active');
+            if (scrollable) scrollable.scrollTop = 0;
+          } else {
+            slide.classList.remove('active');
+          }
+        });
+        
+        currentSlideEl.textContent = currentSlide + 1;
+        
+        const progressPercentage = ((currentSlide + 1) / totalSlides) * 100;
+        progressBar.style.width = `${progressPercentage}%`;
+        
+        prevBtn.disabled = currentSlide === 0;
+        nextBtn.disabled = currentSlide === totalSlides - 1;
+      }
+
+      function handleNext(e) {
+        e.preventDefault(); 
+        if (currentSlide < totalSlides - 1) {
+          currentSlide++;
+          updateSlide();
+        }
+      }
+
+      function handlePrev(e) {
+        e.preventDefault();
+        if (currentSlide > 0) {
+          currentSlide--;
+          updateSlide();
+        }
+      }
+
+      nextBtn.addEventListener('click', handleNext);
+      prevBtn.addEventListener('click', handlePrev);
+      
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight' && !nextBtn.disabled) {
+          handleNext(e);
+        } else if (e.key === 'ArrowLeft' && !prevBtn.disabled) {
+          handlePrev(e);
+        }
+      });
+
+      updateSlide();
+    });
+  </script>
+</body>
+</html>

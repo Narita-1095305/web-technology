@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>第8章 Web API</title>
+  <meta name="description" content="PDF「第8章 Web API」の要約スライド">
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Inter Font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+  
+  <style>
+    /* 既存のスライドデザインを忠実に再現するためのスタイル */
+    body { 
+      font-family: 'Inter', 'Noto Sans JP', sans-serif; 
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+    .code-block {
+      background-color: #1e293b; /* slate-800 */
+      color: #e2e8f0; /* slate-200 */
+      padding: 1rem;
+      border-radius: 0.5rem;
+      font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
+      font-size: 0.875rem;
+      line-height: 1.6;
+      overflow-x: auto;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+    }
+    .slide {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.6s ease-in-out, visibility 0.6s;
+      overflow-y: auto;
+      padding: 2rem 1rem;
+    }
+    .slide.active {
+      opacity: 1;
+      visibility: visible;
+      z-index: 10;
+    }
+    .scrollable-container {
+      width: 100%;
+      height: 100%;
+      overflow-y: auto;
+      padding: 2rem 1rem;
+    }
+    .sticky-header {
+        position: -webkit-sticky; /* Safari */
+        position: sticky;
+        top: 0;
+        z-index: 20;
+        padding-top: 1.5rem;
+        padding-bottom: 1.5rem;
+        width: 100%;
+        background: inherit; /* 親の背景を継承 */
+    }
+    @keyframes animated-gradient {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+    }
+    .animated-gradient {
+        background-size: 200% 200%;
+        animation: animated-gradient 15s ease infinite;
+    }
+  </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+  <div class="relative w-screen h-screen overflow-hidden">
+    <!-- 装飾要素 -->
+    <div class="absolute top-0 right-0 w-96 h-96 rounded-full bg-indigo-400 opacity-10 -translate-y-1/2 translate-x-1/2 blur-3xl"></div>
+    <div class="absolute bottom-0 left-0 w-80 h-80 rounded-full bg-pink-400 opacity-10 translate-y-1/2 -translate-x-1/2 blur-3xl"></div>
+
+    <!-- スライドコンテナ -->
+    <div id="slide-container" class="relative w-full h-full">
+      
+      <!-- スライド1: タイトル -->
+      <div class="slide active bg-gradient-to-br from-indigo-50 to-pink-100 animated-gradient" data-slide="0">
+        <div class="text-center relative z-10 p-8">
+            <h1 class="text-5xl md:text-6xl font-bold bg-gradient-to-r from-pink-600 to-indigo-600 bg-clip-text text-transparent mb-4">第8章 Web API</h1>
+            <p class="text-xl md:text-2xl text-gray-700 mt-4">プログラムとWebの対話</p>
+            <p class="text-md md:text-lg text-gray-600 mt-8 max-w-3xl mx-auto">
+              SPAの普及に伴い、サーバーの役割はHTML生成からデータ提供へと変化しました。本章では、その中核技術であるWeb APIの設計思想と実装を学びます。
+            </p>
+        </div>
+      </div>
+
+      <!-- スライド2: APIのWeb化 -->
+      <div class="slide bg-gradient-to-br from-gray-100 to-slate-200" data-slide="1">
+        <div class="max-w-5xl mx-auto p-4 md:p-8">
+            <div class="mb-8 flex items-center gap-4">
+                <div class="p-3 rounded-full bg-slate-200"><i data-lucide="blinds" class="w-6 h-6 text-slate-700"></i></div>
+                <h2 class="text-4xl font-bold">サーバーの役割の変化</h2>
+            </div>
+            <p class="text-center mb-6">従来型アーキテクチャからSPAへの進化に伴い、サーバーの役割は大きく変わりました。</p>
+            <div class="bg-white/80 p-6 rounded-xl shadow-md">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                    <div class="text-center p-4 border rounded-lg">
+                        <h3 class="font-bold text-gray-700">従来型Webアプリケーション</h3>
+                        <i data-lucide="server" class="w-16 h-16 mx-auto my-4 text-gray-500"></i>
+                        <p class="text-sm">サーバーが<strong class="text-slate-600">HTML生成</strong>とアプリケーションロジックの両方を担当。</p>
+                    </div>
+                    <div class="text-center p-4 border rounded-lg">
+                        <h3 class="font-bold text-gray-700">SPA + Web API</h3>
+                        <i data-lucide="server-cog" class="w-16 h-16 mx-auto my-4 text-gray-500"></i>
+                        <p class="text-sm">サーバーは<strong class="text-slate-600">JSONデータ</strong>を提供するAPIに専念。HTML生成はクライアントのJSが担う。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+      </div>
+
+      <!-- スライド3: RESTの登場 -->
+      <div class="slide bg-gradient-to-br from-blue-50 to-sky-100" data-slide="2">
+        <div class="max-w-4xl mx-auto p-4 md:p-8 text-center">
+            <div class="mb-8 flex items-center justify-center gap-4">
+                <div class="p-3 rounded-full bg-sky-100"><i data-lucide="anchor" class="w-8 h-8 text-sky-600"></i></div>
+                <h2 class="text-4xl font-bold">Web API設計の指針: REST</h2>
+            </div>
+            <p class="text-lg mb-8 max-w-3xl mx-auto">Web APIの設計が自由すぎるという課題に対し、HTTPの生みの親の一人である<strong class="text-sky-600">ロイ・フィールディング</strong>が、Webを成功に導いた設計思想を<strong class="text-sky-600">REST (REpresentational State Transfer)</strong>として言語化しました。</p>
+            <div class="bg-white/80 p-8 rounded-xl shadow-lg">
+              <h3 class="font-semibold text-xl mb-4 text-sky-800">RESTの6つの原則（アーキテクチャスタイル）</h3>
+              <div class="grid grid-cols-2 md:grid-cols-3 gap-4 text-sm">
+                  <div class="p-2 bg-sky-50 rounded">クライアント/サーバー</div>
+                  <div class="p-2 bg-sky-50 rounded">ステートレスサーバー</div>
+                  <div class="p-2 bg-sky-50 rounded">キャッシュ</div>
+                  <div class="p-2 bg-sky-50 rounded font-bold text-sky-700">統一インターフェース</div>
+                  <div class="p-2 bg-sky-50 rounded">階層化システム</div>
+                  <div class="p-2 bg-sky-50 rounded">コードオンデマンド</div>
+              </div>
+            </div>
+        </div>
+      </div>
+      
+      <!-- スライド4: リソース指向アーキテクチャ(ROA) -->
+      <div class="slide bg-gradient-to-br from-teal-50 to-cyan-100" data-slide="3">
+        <div class="scrollable-container max-w-4xl mx-auto">
+          <div class="sticky-header bg-gradient-to-br from-teal-50 to-cyan-100 flex items-center gap-4">
+            <div class="p-3 rounded-full bg-cyan-100"><i data-lucide="drafting-compass" class="w-6 h-6 text-cyan-700"></i></div>
+            <h2 class="text-4xl font-bold">リソース指向アーキテクチャ (ROA)</h2>
+          </div>
+          <div class="pt-6">
+            <p class="text-center mb-6">RESTの考え方をWeb API設計に適用したものがROAです。APIが操作する対象を「リソース」と捉え、4つの特性を重視します。</p>
+            <div class="bg-white/80 p-6 rounded-xl shadow-md space-y-4">
+              <div class="p-3 bg-cyan-50 rounded-lg"><strong>① アドレス可能性:</strong> 全てのリソースは一意なURIを持つ。 (例: `/todos/123`)</div>
+              <div class="p-3 bg-cyan-50 rounded-lg"><strong>② 統一インターフェース:</strong> 操作はHTTPメソッド (GET, POST, PUT, DELETE) で表現する。</div>
+              <div class="p-3 bg-cyan-50 rounded-lg"><strong>③ 接続性:</strong> あるリソースから関連する別のリソースへリンクでたどれる。</div>
+              <div class="p-3 bg-cyan-50 rounded-lg"><strong>④ ステートレス性:</strong> 各リクエストは、それ自体で完結しており、サーバーは状態を保持しない。</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+       <!-- スライド5: API設計(1): リソースとURL -->
+      <div class="slide bg-gradient-to-br from-green-50 to-lime-100" data-slide="4">
+        <div class="max-w-4xl mx-auto p-4 md:p-8">
+            <div class="mb-8 flex items-center gap-4">
+                <div class="p-3 rounded-full bg-lime-100"><i data-lucide="map-pinned" class="w-6 h-6 text-lime-600"></i></div>
+                <h2 class="text-4xl font-bold">API設計(1): リソースとURL</h2>
+            </div>
+            <p class="text-center mb-6">まず、アプリケーションが扱う「情報 = リソース」を洗い出し、それぞれにURL（エンドポイント）を割り当てます。</p>
+            <div class="bg-white/80 p-6 rounded-xl shadow-md">
+              <div class="flex items-center justify-center gap-6">
+                  <div class="text-center">
+                    <i data-lucide="list-todo" class="w-16 h-16 text-lime-700 mx-auto"></i>
+                    <p class="mt-2 font-semibold">ToDoリスト</p>
+                    <div class="code-block text-sm mt-2">/todos/</div>
+                  </div>
+                   <div class="text-4xl text-gray-300">&rarr;</div>
+                   <div class="text-center">
+                    <i data-lucide="file-check" class="w-16 h-16 text-lime-700 mx-auto"></i>
+                    <p class="mt-2 font-semibold">個々のToDo項目</p>
+                    <div class="code-block text-sm mt-2">/todos/&lt;ID&gt;</div>
+                  </div>
+              </div>
+              <p class="text-xs text-center mt-6 text-gray-500">URLはリソースを表現する「名詞」で設計するのがRESTfulの基本です。</p>
+            </div>
+        </div>
+      </div>
+      
+      <!-- スライド6: API設計(2): CRUDとHTTPメソッド (改訂版) -->
+      <div class="slide bg-gradient-to-br from-green-50 to-lime-100" data-slide="5">
+          <div class="max-w-5xl mx-auto p-4 md:p-8">
+              <div class="mb-8 flex items-center gap-4">
+                  <div class="p-3 rounded-full bg-lime-100"><i data-lucide="shuffle" class="w-6 h-6 text-lime-600"></i></div>
+                  <h2 class="text-4xl font-bold">API設計(2): 具体的な仕様</h2>
+              </div>
+              <p class="text-center mb-6">リソースに対するCRUD操作をHTTPメソッドにマッピングし、具体的なレスポンスを定義します。</p>
+              <div class="bg-white/80 p-6 rounded-xl shadow-md">
+                 <table class="w-full text-sm text-left">
+                    <thead class="bg-lime-100">
+                        <tr>
+                            <th class="p-2">操作</th>
+                            <th class="p-2">メソッド</th>
+                            <th class="p-2">URL</th>
+                            <th class="p-2">成功ステータス</th>
+                            <th class="p-2">キーヘッダ</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="border-b">
+                            <td class="p-2"><strong>C</strong>reate</td>
+                            <td class="p-2 font-mono text-lime-700 font-bold">POST</td>
+                            <td class="p-2 font-mono">/todos/</td>
+                            <td class="p-2 font-mono">201 Created</td>
+                            <td class="p-2 font-mono">Location</td>
+                        </tr>
+                         <tr class="border-b">
+                            <td class="p-2"><strong>R</strong>ead (List)</td>
+                            <td class="p-2 font-mono text-lime-700 font-bold">GET</td>
+                            <td class="p-2 font-mono">/todos/</td>
+                            <td class="p-2 font-mono">200 OK</td>
+                            <td class="p-2">-</td>
+                        </tr>
+                         <tr class="border-b">
+                            <td class="p-2"><strong>R</strong>ead (Item)</td>
+                            <td class="p-2 font-mono text-lime-700 font-bold">GET</td>
+                            <td class="p-2 font-mono">/todos/&lt;ID&gt;</td>
+                            <td class="p-2 font-mono">200 OK</td>
+                            <td class="p-2">-</td>
+                        </tr>
+                         <tr class="border-b">
+                            <td class="p-2"><strong>U</strong>pdate</td>
+                            <td class="p-2 font-mono text-lime-700 font-bold">PUT / PATCH</td>
+                            <td class="p-2 font-mono">/todos/&lt;ID&gt;</td>
+                            <td class="p-2 font-mono">200 OK</td>
+                             <td class="p-2">-</td>
+                        </tr>
+                         <tr>
+                            <td class="p-2"><strong>D</strong>elete</td>
+                            <td class="p-2 font-mono text-lime-700 font-bold">DELETE</td>
+                            <td class="p-2 font-mono">/todos/&lt;ID&gt;</td>
+                            <td class="p-2 font-mono">204 No Content</td>
+                             <td class="p-2">-</td>
+                        </tr>
+                    </tbody>
+                 </table>
+              </div>
+          </div>
+      </div>
+      
+      <!-- スライド7: API実装例 -->
+       <div class="slide bg-gradient-to-br from-gray-100 to-slate-200" data-slide="6">
+        <div class="scrollable-container max-w-4xl mx-auto">
+          <div class="sticky-header bg-gradient-to-br from-gray-100 to-slate-200 flex items-center gap-4">
+            <div class="p-3 rounded-full bg-slate-200"><i data-lucide="file-code-2" class="w-6 h-6 text-slate-700"></i></div>
+            <h2 class="text-4xl font-bold">API実装例 (Go)</h2>
+          </div>
+          <div class="pt-6">
+            <p class="text-center mb-6">GoのWebサーバーで、URLのパスとHTTPメソッドに応じて処理を振り分ける「ルーター」部分の実装例です。</p>
+            <div class="bg-white/80 p-6 rounded-xl shadow-md">
+              <div class="code-block text-xs"><pre><code>// /todos/ で始まる全てのリクエストをこの関数で処理
+func handleTodos(w http.ResponseWriter, r *http.Request) {
+    // ... セッション・認証チェック ...
+    
+    switch r.Method {
+    case http.MethodGet:
+        todoId := retrieveToDoId(r) // URLからIDを抽出
+        if todoId == "" {
+            getToDoList(w, r, session) // IDがなければリスト取得
+        } else {
+            getToDo(w, r, session)     // IDがあれば個別取得
+        }
+    case http.MethodPost:
+        addToDo(w, r, session)     // ToDoの追加
+    case http.MethodPut:
+        editToDo(w, r, session)    // ToDoの更新
+    case http.MethodDelete:
+        deleteToDo(w, r, session)  // ToDoの削除
+    default:
+        // 対応していないメソッドはエラー
+        w.WriteHeader(http.StatusMethodNotAllowed)
+    }
+}</code></pre></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- スライド8: API呼び出しの実践 (改訂版) -->
+      <div class="slide bg-gradient-to-br from-gray-100 to-slate-200" data-slide="7">
+        <div class="scrollable-container max-w-4xl mx-auto">
+          <div class="sticky-header bg-gradient-to-br from-gray-100 to-slate-200 flex items-center gap-4">
+            <div class="p-3 rounded-full bg-slate-200"><i data-lucide="terminal" class="w-6 h-6 text-slate-700"></i></div>
+            <h2 class="text-4xl font-bold">API呼び出しと実行結果 (curl)</h2>
+          </div>
+          <div class="pt-6 space-y-4">
+            <div class="bg-white/80 p-4 rounded-xl shadow-md">
+              <h3 class="font-semibold text-slate-800 mb-2">ToDoリストの取得 (GET)</h3>
+              <div class="code-block text-sm"><pre><code>$ curl -i -H "Cookie: sessionId=..." https://.../todos/</code></pre></div>
+              <p class="text-xs mt-2 text-gray-500">実行結果:</p>
+              <div class="code-block text-xs"><pre><code>HTTP/2 200
+content-type: application/json
+...
+
+{"items":[{"id":"...","todo":"..."}]}</code></pre></div>
+            </div>
+             <div class="bg-white/80 p-4 rounded-xl shadow-md">
+              <h3 class="font-semibold text-slate-800 mb-2">ToDoの追加 (POST)</h3>
+              <div class="code-block text-sm"><pre><code>$ curl -i -X POST -H "Content-Type: application/json" \
+  -d '{"todo":"新しいタスク"}' -H "Cookie: ..." https://.../todos/</code></pre></div>
+              <p class="text-xs mt-2 text-gray-500">実行結果:</p>
+              <div class="code-block text-xs"><pre><code>HTTP/2 201 Created
+Location: /todos/a4cf...
+...</code></pre></div>
+            </div>
+            <div class="bg-white/80 p-4 rounded-xl shadow-md">
+              <h3 class="font-semibold text-slate-800 mb-2">ToDoの削除 (DELETE)</h3>
+              <div class="code-block text-sm"><pre><code>$ curl -i -X DELETE -H "Cookie: sessionId=..." https://.../todos/&lt;ID&gt;</code></pre></div>
+              <p class="text-xs mt-2 text-gray-500">実行結果:</p>
+               <div class="code-block text-xs"><pre><code>HTTP/2 204 No Content
+...</code></pre></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- スライド9: クロスオリジン通信とSOP -->
+       <div class="slide bg-gradient-to-br from-pink-50 to-red-100" data-slide="8">
+        <div class="max-w-5xl mx-auto p-4 md:p-8">
+            <div class="mb-8 flex items-center gap-4">
+                <div class="p-3 rounded-full bg-red-100"><i data-lucide="shield-off" class="w-6 h-6 text-red-600"></i></div>
+                <h2 class="text-4xl font-bold">API公開とクロスオリジン問題</h2>
+            </div>
+            <p class="text-center text-lg mb-6">Web APIを外部のサイトから利用しようとすると、ブラウザのセキュリティ機能である<strong class="text-red-700">同一オリジンポリシー (Same-Origin Policy)</strong> に阻まれます。</p>
+            <div class="bg-white/80 p-6 rounded-xl shadow-lg flex flex-col items-center gap-4">
+                <p class="text-sm">`tiny-cal.com` のJSから `tiny-todo.com` のAPIを呼び出すと...</p>
+                <div class="font-mono text-red-600 bg-red-50 p-3 rounded-lg">CORS error</div>
+                <p class="text-sm text-center">これは、悪意あるサイトが勝手に銀行サイトなどのAPIを呼び出して情報を盗むのを防ぐための、重要なセキュリティ機能です。</p>
+            </div>
+        </div>
+      </div>
+      
+       <!-- スライド10: 解決策: CORS (改訂版) -->
+       <div class="slide bg-gradient-to-br from-green-50 to-teal-100" data-slide="9">
+        <div class="scrollable-container max-w-5xl mx-auto">
+          <div class="sticky-header bg-gradient-to-br from-green-50 to-teal-100 flex items-center gap-4">
+            <div class="p-3 rounded-full bg-teal-100"><i data-lucide="shield-check" class="w-6 h-6 text-teal-600"></i></div>
+            <h2 class="text-4xl font-bold">解決策: CORS</h2>
+          </div>
+          <div class="pt-6">
+            <p class="text-center mb-6"><strong>CORS (Cross-Origin Resource Sharing)</strong> は、サーバー側がアクセス許可を明示することで、安全にクロスオリジン通信を実現する仕組みです。</p>
+            <div class="bg-white/80 p-6 rounded-xl shadow-md space-y-4">
+              <div>
+                <h3 class="text-lg font-semibold text-teal-800 mb-2">シンプルリクエスト</h3>
+                <p class="text-sm">GETメソッドなど、特定の条件を満たす「安全な」リクエストは、プリフライトなしで直接送信されます。サーバーはレスポンスヘッダ `Access-Control-Allow-Origin` で許可を示す必要があります。</p>
+              </div>
+              <hr/>
+              <div>
+                <h3 class="text-lg font-semibold text-teal-800 mb-2">プリフライトリクエスト</h3>
+                <p class="text-sm mb-2">PUTやDELETEなど、サーバーに影響を与える可能性のあるリクエストでは、ブラウザはまず`OPTIONS`メソッドで事前確認（プリフライト）を行います。</p>
+                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                   <div class="code-block text-xs">
+                     <p class="text-gray-400">// ① ブラウザからの問い合わせ (Preflight)</p>
+                     <p>OPTIONS /todos/123 HTTP/1.1</p>
+                     <p>Origin: https://tiny-cal.com</p>
+                     <p>Access-Control-Request-Method: DELETE</p>
+                   </div>
+                   <div class="code-block text-xs">
+                     <p class="text-gray-400">// ② サーバーからの許可</p>
+                     <p>HTTP/1.1 204 No Content</p>
+                     <p>Access-Control-Allow-Origin: https://tiny-cal.com</p>
+                     <p>Access-Control-Allow-Methods: DELETE, ...</p>
+                   </div>
+                 </div>
+                 <p class="text-sm mt-4">サーバーが許可した場合のみ、ブラウザは本来のリクエストを送信します。</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+       <!-- スライド11: RESTの課題とGraphQL -->
+      <div class="slide bg-gradient-to-br from-gray-200 to-slate-300" data-slide="10">
+        <div class="max-w-4xl mx-auto p-4 md:p-8 text-center">
+            <div class="mb-8 flex items-center justify-center gap-4">
+                <div class="p-3 rounded-full bg-slate-300"><i data-lucide="help-circle" class="w-8 h-8 text-slate-600"></i></div>
+                <h2 class="text-4xl font-bold">RESTの課題</h2>
+            </div>
+            <p class="text-lg mb-8 max-w-3xl mx-auto">REST APIはシンプルで強力ですが、複雑なアプリでは課題も見えてきました。</p>
+            <div class="bg-white/80 p-6 rounded-xl shadow-md">
+                <ul class="list-disc list-inside text-sm space-y-4 text-left">
+                  <li><strong>N+1問題:</strong> 一覧取得後、各詳細を取得するために多数のAPIコールが必要になり、パフォーマンスが低下する。</li>
+                  <li><strong>オーバーフェッチ:</strong> APIが固定のデータ構造を返すため、クライアントに不要なデータまで送信してしまう。</li>
+                  <li><strong>アンダーフェッチ:</strong> 必要なデータが足りず、クライアントが追加のAPIコールを強いられる。</li>
+                </ul>
+            </div>
+        </div>
+      </div>
+
+       <!-- NEW スライド12: GraphQLの実践: クエリとレスポンス -->
+       <div class="slide bg-gradient-to-br from-gray-200 to-slate-300" data-slide="11">
+        <div class="scrollable-container max-w-6xl mx-auto">
+          <div class="sticky-header bg-gradient-to-br from-gray-200 to-slate-300 flex items-center gap-4">
+            <div class="p-3 rounded-full bg-slate-300"><i data-lucide="file-question" class="w-6 h-6 text-slate-700"></i></div>
+            <h2 class="text-4xl font-bold">GraphQLの実践: クエリとレスポンス</h2>
+          </div>
+          <div class="pt-6">
+            <p class="text-center mb-6">GraphQLでは、クライアントが必要なデータの構造を「クエリ」として記述し、サーバーに要求します。</p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div class="bg-white/80 p-4 rounded-xl shadow-md">
+                <h3 class="text-lg font-semibold text-slate-800 mb-2">クライアントからのクエリ例</h3>
+                <p class="text-xs mb-2">ToDo一覧の中から、`id`と`todo`だけが必要な場合、その2つのフィールドだけを指定してリクエストします。</p>
+                <div class="code-block text-sm"><pre><code>query {
+  todos {
+    id
+    todo
+  }
+}</code></pre></div>
+              </div>
+              <div class="bg-white/80 p-4 rounded-xl shadow-md">
+                <h3 class="text-lg font-semibold text-slate-800 mb-2">サーバーからのレスポンス例</h3>
+                <p class="text-xs mb-2">サーバーは、クエリで要求された通りの構造で、過不足なくデータを返します。これによりオーバーフェッチを防ぎます。</p>
+                <div class="code-block text-sm"><pre><code>{
+  "data": {
+    "todos": [
+      {
+        "id": "...",
+        "todo": "買い物へ行く"
+      },
+      {
+        "id": "...",
+        "todo": "旅行の準備をする"
+      }
+    ]
+  }
+}</code></pre></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- スライド13: まとめ -->
+      <div class="slide bg-gradient-to-br from-emerald-50 to-teal-100" data-slide="12">
+          <div class="max-w-4xl mx-auto text-center p-4 md:p-8">
+              <h2 class="text-4xl font-bold mb-10">第8章のまとめ</h2>
+              <div class="space-y-6 text-left bg-white/80 p-8 rounded-xl shadow-lg">
+                  <div class="flex items-start gap-4">
+                      <i data-lucide="cpu" class="w-10 h-10 text-teal-600 mt-1"></i>
+                      <p><strong>APIのWeb化:</strong> SPAの普及により、サーバの役割はHTML生成から<strong class="text-teal-700">JSONデータを返すWeb API</strong>へと進化した。</p>
+                  </div>
+                  <div class="flex items-start gap-4">
+                      <i data-lucide="milestone" class="w-10 h-10 text-teal-600 mt-1"></i>
+                      <p><strong>RESTという設計指針:</strong> Web APIの設計に一貫性をもたらすため、リソース中心の設計思想である<strong class="text-teal-700">REST</strong>が広く採用されるようになった。</p>
+                  </div>
+                  <div class="flex items-start gap-4">
+                      <i data-lucide="share-2" class="w-10 h-10 text-teal-600 mt-1"></i>
+                      <p><strong>APIの公開と連携:</strong> Web APIは<strong class="text-teal-700">CORS</strong>の仕組みによって安全に外部公開でき、サービス間の連携（マッシュアップ）を可能にした。</p>
+                  </div>
+                   <div class="flex items-start gap-4">
+                      <i data-lucide="move-up-right" class="w-10 h-10 text-teal-600 mt-1"></i>
+                      <p><strong>技術の揺り戻しと進化:</strong> RESTの課題を解決するため、RPCスタイルに回帰したとも言える<strong class="text-teal-700">GraphQL</strong>が登場するなど、Web APIは今も進化を続けている。</p>
+                  </div>
+              </div>
+          </div>
+      </div>
+      
+    </div>
+
+    <!-- ナビゲーション -->
+    <div class="absolute bottom-8 right-8 flex gap-4 z-50">
+      <button id="prev-btn" class="w-12 h-12 rounded-full bg-white/90 shadow-lg flex items-center justify-center text-gray-700 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition-all">
+        <i data-lucide="chevron-left" class="w-6 h-6"></i>
+      </button>
+      <button id="next-btn" class="w-12 h-12 rounded-full bg-white/90 shadow-lg flex items-center justify-center text-gray-700 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition-all">
+        <i data-lucide="chevron-right" class="w-6 h-6"></i>
+      </button>
+    </div>
+
+    <!-- プログレスバー -->
+    <div class="absolute bottom-0 left-0 right-0 h-1 bg-gray-200 z-50">
+      <div id="progress-bar" class="h-full bg-pink-500 transition-all duration-300 ease-in-out"></div>
+    </div>
+
+    <!-- スライド番号 -->
+    <div class="absolute bottom-8 left-8 text-sm font-medium text-gray-600 z-50">
+      <span id="current-slide">1</span> / <span id="total-slides">13</span>
+    </div>
+  </div>
+
+  <script>
+    // スライドナビゲーションのスクリプト
+    document.addEventListener('DOMContentLoaded', () => {
+      lucide.createIcons();
+
+      const slides = document.querySelectorAll('.slide');
+      const prevBtn = document.getElementById('prev-btn');
+      const nextBtn = document.getElementById('next-btn');
+      const currentSlideEl = document.getElementById('current-slide');
+      const totalSlidesEl = document.getElementById('total-slides');
+      const progressBar = document.getElementById('progress-bar');
+      
+      const totalSlides = slides.length;
+      totalSlidesEl.textContent = totalSlides;
+      
+      let currentSlide = 0;
+
+      function updateSlide() {
+        slides.forEach((slide, index) => {
+          const scrollable = slide.querySelector('.scrollable-container');
+          if (index === currentSlide) {
+            slide.classList.add('active');
+            if (scrollable) scrollable.scrollTop = 0;
+          } else {
+            slide.classList.remove('active');
+          }
+        });
+        
+        currentSlideEl.textContent = currentSlide + 1;
+        
+        const progressPercentage = ((currentSlide + 1) / totalSlides) * 100;
+        progressBar.style.width = `${progressPercentage}%`;
+        
+        prevBtn.disabled = currentSlide === 0;
+        nextBtn.disabled = currentSlide === totalSlides - 1;
+      }
+
+      function handleNext(e) {
+        e.preventDefault(); 
+        if (currentSlide < totalSlides - 1) {
+          currentSlide++;
+          updateSlide();
+        }
+      }
+
+      function handlePrev(e) {
+        e.preventDefault();
+        if (currentSlide > 0) {
+          currentSlide--;
+          updateSlide();
+        }
+      }
+
+      nextBtn.addEventListener('click', handleNext);
+      prevBtn.addEventListener('click', handlePrev);
+      
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight' && !nextBtn.disabled) {
+          handleNext(e);
+        } else if (e.key === 'ArrowLeft' && !prevBtn.disabled) {
+          handlePrev(e);
+        }
+      });
+
+      updateSlide();
+    });
+  </script>
+</body>
+</html>

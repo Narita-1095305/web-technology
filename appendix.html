@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>付録A コンピュータの基礎</title>
+  <meta name="description" content="PDF「付録A コンピュータの基礎」の要約スライド">
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Inter Font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+  
+  <style>
+    /* 添付されたHTMLのデザインを忠実に再現するためのスタイル */
+    body { 
+      font-family: 'Inter', 'Noto Sans JP', sans-serif; 
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+    .code-block {
+      background-color: #1e293b; /* slate-800 */
+      color: #e2e8f0; /* slate-200 */
+      padding: 1rem;
+      border-radius: 0.5rem;
+      font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
+      font-size: 0.875rem;
+      line-height: 1.6;
+      overflow-x: auto;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+    }
+    .slide {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.6s ease-in-out, visibility 0.6s;
+      overflow-y: auto;
+      padding: 2rem 1rem;
+    }
+    .slide.active {
+      opacity: 1;
+      visibility: visible;
+      z-index: 10;
+    }
+    .scrollable-container {
+      width: 100%;
+      height: 100%;
+      overflow-y: auto;
+      padding: 2rem 1rem;
+    }
+    .sticky-header {
+        position: -webkit-sticky; /* Safari */
+        position: sticky;
+        top: 0;
+        z-index: 20;
+        padding-top: 1.5rem;
+        padding-bottom: 1.5rem;
+        width: 100%;
+        background: inherit; /* 親の背景を継承 */
+    }
+    @keyframes animated-gradient {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+    }
+    .animated-gradient {
+        background-size: 200% 200%;
+        animation: animated-gradient 15s ease infinite;
+    }
+  </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+  <div class="relative w-screen h-screen overflow-hidden">
+    <!-- 装飾要素 -->
+    <div class="absolute top-0 right-0 w-96 h-96 rounded-full bg-gray-400 opacity-10 -translate-y-1/2 translate-x-1/2 blur-3xl"></div>
+    <div class="absolute bottom-0 left-0 w-80 h-80 rounded-full bg-slate-400 opacity-10 translate-y-1/2 -translate-x-1/2 blur-3xl"></div>
+
+    <!-- スライドコンテナ -->
+    <div id="slide-container" class="relative w-full h-full">
+      
+      <!-- スライド1: タイトル -->
+      <div class="slide active bg-gradient-to-br from-gray-100 to-slate-200 animated-gradient" data-slide="0">
+        <div class="text-center relative z-10 p-8">
+            <h1 class="text-5xl md:text-6xl font-bold bg-gradient-to-r from-slate-600 to-gray-800 bg-clip-text text-transparent mb-4">付録A コンピュータの基礎</h1>
+            <p class="text-xl md:text-2xl text-gray-700 mt-4">Webを支える根幹技術への招待</p>
+            <p class="text-md md:text-lg text-gray-600 mt-8 max-w-3xl mx-auto">
+              本書を理解するために不可欠なコンピュータの基礎知識を解説します。2進数からTCP/IPまで、Web技術の土台となる概念を巡る旅に出ましょう。
+            </p>
+        </div>
+      </div>
+
+      <!-- スライド2: A.1 2進数と16進数 -->
+      <div class="slide bg-gradient-to-br from-blue-50 to-cyan-100" data-slide="1">
+        <div class="max-w-4xl mx-auto p-4 md:p-8">
+          <div class="mb-10 flex items-center gap-4">
+            <div class="p-3 rounded-full bg-cyan-100"><i data-lucide="binary" class="w-6 h-6 text-cyan-600"></i></div>
+            <h2 class="text-4xl font-bold">A.1 2進数と16進数</h2>
+          </div>
+          <p class="text-center mb-6">コンピュータは内部ですべてを「0」と「1」の2値（バイナリ）で扱います。このバイナリを人間が扱いやすくするために16進数が使われます。</p>
+          <div class="bg-white/80 p-6 rounded-xl shadow-md">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+              <div class="text-sm">
+                <ul class="space-y-3">
+                  <li><strong>ビット (bit):</strong> 「0」か「1」かを表す情報の最小単位。</li>
+                  <li><strong>バイト (byte):</strong> 8ビットを1単位としたもの。256通り (2⁸) の情報を表現可能。</li>
+                  <li><strong>16進数 (Hexadecimal):</strong> 4ビットを1桁で表現する方法。1バイトをちょうど2桁で表現できるため、バイナリとの親和性が高い。</li>
+                </ul>
+              </div>
+              <div class="font-mono text-xs">
+                 <p class="text-center font-sans font-bold text-cyan-700 mb-2">10進・2進・16進 対応表</p>
+                 <div class="grid grid-cols-3 gap-2 p-2 bg-cyan-50 rounded">
+                    <div><span class="text-gray-500">10:</span> 10, <span class="text-gray-500">2:</span> 0000 1010, <span class="text-gray-500">16:</span> 0A</div>
+                    <div><span class="text-gray-500">10:</span> 15, <span class="text-gray-500">2:</span> 0000 1111, <span class="text-gray-500">16:</span> 0F</div>
+                    <div><span class="text-gray-500">10:</span> 16, <span class="text-gray-500">2:</span> 0001 0000, <span class="text-gray-500">16:</span> 10</div>
+                    <div><span class="text-gray-500">10:</span> 32, <span class="text-gray-500">2:</span> 0010 0000, <span class="text-gray-500">16:</span> 20</div>
+                    <div><span class="text-gray-500">10:</span> 255, <span class="text-gray-500">2:</span> 1111 1111, <span class="text-gray-500">16:</span> FF</div>
+                 </div>
+              </div>
+            </div>
+             <p class="text-xs text-center mt-4 text-gray-500">16進数では10〜15をA〜Fで表現します。先頭に`0x`を付けて10進数と区別することがあります。</p>
+          </div>
+        </div>
+      </div>
+      
+      <!-- スライド3: A.2 テキストとバイナリ (修正) -->
+      <div class="slide bg-gradient-to-br from-purple-50 to-pink-100" data-slide="2">
+          <div class="max-w-5xl mx-auto p-4 md:p-8">
+              <div class="mb-8 flex items-center gap-4">
+                  <div class="p-3 rounded-full bg-pink-100"><i data-lucide="file-text" class="w-6 h-6 text-pink-600"></i></div>
+                  <h2 class="text-4xl font-bold">A.2 テキストとバイナリ</h2>
+              </div>
+              <p class="text-center mb-6">コンピュータが扱うデータは、人間が読める文字で構成される「テキストデータ」と、それ以外の「バイナリデータ」に大別されます。</p>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="bg-white/80 p-4 rounded-xl shadow-md">
+                  <h3 class="font-semibold mb-2 text-pink-800">テキストデータ</h3>
+                  <p class="text-sm mb-2">文字を数値に割り当てた「文字コード」に基づくデータ。人間が直接読んで理解できます。</p>
+                  <div class="code-block text-sm"><pre><code>// 16進数データ
+48 65 6C 6C 6F
+// 対応する文字列
+H  e  l  l  o</code></pre></div>
+                </div>
+                 <div class="bg-white/80 p-4 rounded-xl shadow-md">
+                  <h3 class="font-semibold mb-2 text-gray-700">バイナリデータ</h3>
+                  <p class="text-sm mb-2">画像、動画、実行ファイルなど、文字として直接表現できないデータ。無理に表示しようとすると文字化けします。</p>
+                  <div class="code-block text-sm"><pre><code>// 16進数データ
+14 C8 25 6B 45
+// 対応する文字列
+×  ×  %  k  E (一部対応文字なし)</code></pre></div>
+                </div>
+              </div>
+              <div class="mt-4 bg-white/80 p-4 rounded-xl shadow-md">
+                <h4 class="font-semibold text-pink-800 mb-2">参考: ASCIIコード表 (一部)</h4>
+                <p class="text-xs mb-2">文字が数値で管理されていることがわかります。</p>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-xs text-center font-mono">
+                        <thead>
+                            <tr class="bg-gray-100">
+                                <th class="p-1"></th><th class="p-1">2</th><th class="p-1">3</th><th class="p-1">4</th><th class="p-1">5</th><th class="p-1">6</th><th class="p-1">7</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td class="font-bold bg-gray-100 p-1">x0</td><td>SP</td><td>(</td><td>0</td><td>8</td><td>@</td><td>H</td></tr>
+                            <tr><td class="font-bold bg-gray-100 p-1">x1</td><td>!</td><td>)</td><td>1</td><td>9</td><td>A</td><td>I</td></tr>
+                            <tr><td class="font-bold bg-gray-100 p-1">x2</td><td>"</td><td>*</td><td>2</td><td>:</td><td>B</td><td>J</td></tr>
+                            <tr><td class="font-bold bg-gray-100 p-1">x3</td><td>#</td><td>+</td><td>3</td><td>;</td><td>C</td><td>K</td></tr>
+                            <tr><td class="font-bold bg-gray-100 p-1">x4</td><td>$</td><td>,</td><td>4</td><td>&lt;</td><td>D</td><td>L</td></tr>
+                            <tr><td class="font-bold bg-gray-100 p-1">x5</td><td>%</td><td>-</td><td>5</td><td>=</td><td>E</td><td>M</td></tr>
+                            <tr><td class="font-bold bg-gray-100 p-1">x6</td><td>&</td><td>.</td><td>6</td><td>&gt;</td><td>F</td><td>N</td></tr>
+                            <tr><td class="font-bold bg-gray-100 p-1">x7</td><td>'</td><td>/</td><td>7</td><td>?</td><td>G</td><td>O</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+              </div>
+          </div>
+      </div>
+      
+      <!-- スライド4: A.3 文字コード -->
+      <div class="slide bg-gradient-to-br from-green-50 to-teal-100" data-slide="3">
+          <div class="scrollable-container max-w-5xl mx-auto">
+              <div class="sticky-header bg-gradient-to-br from-green-50 to-teal-100 flex items-center gap-4">
+                  <div class="p-3 rounded-full bg-teal-100"><i data-lucide="languages" class="w-6 h-6 text-teal-600"></i></div>
+                  <h2 class="text-4xl font-bold">A.3 文字コード</h2>
+              </div>
+              <div class="pt-6 space-y-4">
+                <div class="bg-white/80 p-4 rounded-xl shadow-md">
+                    <h3 class="font-semibold text-teal-800">符号化文字集合</h3>
+                    <p class="text-sm">コンピュータで扱う文字の集合に、一意の番号（符号位置 / コードポイント）を割り振ったもの。例: ASCII, JIS X 0208, <strong class="text-teal-700">Unicode</strong>。</p>
+                </div>
+                 <div class="bg-white/80 p-4 rounded-xl shadow-md">
+                    <h3 class="font-semibold text-teal-800">文字符号化方式 (エンコーディング)</h3>
+                    <p class="text-sm">符号位置を、実際にデータとして保存・通信するためのバイト列に変換するルール。Unicodeには主に3つの方式がある。</p>
+                    <ul class="text-xs list-disc list-inside mt-2 space-y-1">
+                      <li><strong>UTF-8:</strong> 現在最も普及。ASCII互換で、1〜4バイトの可変長。</li>
+                      <li><strong>UTF-16:</strong> 2または4バイトで表現。メモリ内部で使われることが多い。</li>
+                      <li><strong>UTF-32:</strong> 常に4バイトで表現。単純だが効率は悪い。</li>
+                    </ul>
+                </div>
+                 <div class="bg-white/80 p-4 rounded-xl shadow-md">
+                    <h3 class="font-semibold text-teal-800">その他 (改行コード)</h3>
+                    <p class="text-sm">OSによって改行の表現が異なるため注意が必要。</p>
+                    <ul class="text-xs list-disc list-inside mt-2">
+                      <li><strong>CR+LF (\\r\\n):</strong> Windows</li>
+                      <li><strong>LF (\\n):</strong> Linux, macOS</li>
+                    </ul>
+                </div>
+              </div>
+          </div>
+      </div>
+      
+      <!-- スライド5: A.4 Base64エンコーディング (修正) -->
+      <div class="slide bg-gradient-to-br from-yellow-50 to-orange-100" data-slide="4">
+        <div class="max-w-4xl mx-auto p-4 md:p-8">
+            <div class="mb-8 flex items-center gap-4">
+                <div class="p-3 rounded-full bg-orange-100"><i data-lucide="arrow-left-right" class="w-6 h-6 text-orange-600"></i></div>
+                <h2 class="text-4xl font-bold">A.4 Base64 エンコーディング</h2>
+            </div>
+            <p class="text-center mb-6">バイナリデータを、英数字と一部の記号（計64文字）からなるテキストデータに変換するアルゴリズム。</p>
+            <div class="bg-white/80 p-6 rounded-xl shadow-md space-y-4">
+                <div>
+                  <h3 class="font-semibold text-orange-800 mb-2 text-center">変換の仕組み</h3>
+                  <div class="font-mono text-xs text-center p-4 bg-orange-50 rounded-lg">
+                      <p>元のデータ (3バイト = 24ビット)</p>
+                      <p class="text-orange-600">01001000 01100101 01101100</p>
+                      <p class="mt-2">6ビット毎に区切る</p>
+                      <p class="text-orange-600">010010 000110 010101 101100</p>
+                      <p class="mt-2">対応する文字に変換 (4文字)</p>
+                      <p class="font-bold text-lg">S G V s</p>
+                  </div>
+                </div>
+                <div>
+                  <h3 class="font-semibold text-orange-800 mb-2 text-center">デコード実行例</h3>
+                  <p class="text-sm text-center mb-2">Base64は暗号ではなく、簡単に元に戻せる可逆な変換です。</p>
+                  <div class="code-block text-sm">
+                    <pre><code>$ echo -n SGVsbG8h | base64 -d
+Hello!</code></pre>
+                  </div>
+                </div>
+            </div>
+        </div>
+      </div>
+      
+       <!-- スライド6: A.5 ハッシュ値 (修正) -->
+      <div class="slide bg-gradient-to-br from-indigo-50 to-purple-100" data-slide="5">
+        <div class="scrollable-container max-w-5xl mx-auto">
+            <div class="sticky-header bg-gradient-to-br from-indigo-50 to-purple-100 flex items-center gap-4">
+                <div class="p-3 rounded-full bg-purple-100"><i data-lucide="fingerprint" class="w-6 h-6 text-purple-600"></i></div>
+                <h2 class="text-4xl font-bold">A.5 ハッシュ値</h2>
+            </div>
+            <div class="pt-6">
+              <p class="text-center mb-6">任意の長さのデータから、ハッシュ関数によって生成される固定長のデータ（指紋のようなもの）。</p>
+              <div class="bg-white/80 p-6 rounded-xl shadow-md">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4 mb-6">
+                  <div>
+                    <h3 class="font-semibold text-purple-800 mb-2">特徴①: 一方向性</h3>
+                    <p class="text-sm">データからハッシュ値の計算は容易だが、ハッシュ値から元のデータを復元するのは極めて困難。</p>
+                  </div>
+                  <div>
+                    <h3 class="font-semibold text-purple-800 mb-2">特徴②: 衝突困難性</h3>
+                    <p class="text-sm">元のデータが1ビットでも異なれば、生成されるハッシュ値は全くの別物になる。</p>
+                  </div>
+                </div>
+
+                <svg viewBox="0 0 620 200" class="w-full h-auto">
+                  <defs>
+                      <marker id="arrow_purple_hash" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#8b5cf6"/></marker>
+                      <marker id="arrow_gray_hash" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="4" markerHeight="4" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#6b7280"/></marker>
+                  </defs>
+                  
+                  <!-- Diagram 1: One-way property (一方向性) -->
+                  <g>
+                      <!-- Data Box -->
+                      <path d="M 10 30 H 90 V 80 L 80 90 L 10 90 V 30 Z" fill="#f3f4f6" stroke="#d1d5db"/>
+                      <foreignObject x="15" y="40" width="70" height="40">
+                          <div class="text-[9px] text-center break-words leading-tight">Hello Web Application!</div>
+                      </foreignObject>
+
+                      <!-- Hash Function Circle -->
+                      <circle cx="150" cy="60" r="25" fill="#f5f3ff" stroke="#a78bfa"/>
+                      <text x="150" y="64" text-anchor="middle" font-size="10" class="fill-purple-700">SHA-256</text>
+                      
+                      <!-- Hash Value Box -->
+                      <rect x="215" y="45" width="100" height="30" rx="2" fill="#f3f4f6" stroke="#d1d5db"/>
+                       <foreignObject x="220" y="50" width="90" height="20">
+                          <div class="text-[7px] break-words leading-tight font-mono">8b75f7...b76253ae</div>
+                      </foreignObject>
+
+                      <!-- Arrows -->
+                      <path d="M 90 60 L 125 60" stroke="#8b5cf6" stroke-width="1.5" marker-end="url(#arrow_purple_hash)"/>
+                      <path d="M 175 60 L 215 60" stroke="#8b5cf6" stroke-width="1.5" marker-end="url(#arrow_purple_hash)"/>
+                      
+                      <!-- Reverse Arrow with X -->
+                      <path d="M 215 90 C 150 120, 90 120, 50 85" stroke="#ef4444" stroke-width="1.5" fill="none" marker-end="url(#arrow_purple_hash)"/>
+                      <line x1="125" y1="90" x2="145" y2="110" stroke="#ef4444" stroke-width="2.5"/>
+                      <line x1="145" y1="90" x2="125" y2="110" stroke="#ef4444" stroke-width="2.5"/>
+
+                      <!-- Labels -->
+                      <text x="150" y="30" text-anchor="middle" font-size="9" class="fill-gray-600">簡単に計算できる</text>
+                      <text x="135" y="130" text-anchor="middle" font-size="9" class="fill-gray-600">逆算は非常に困難</text>
+                  </g>
+
+                  <!-- Separator -->
+                  <line x1="325" y1="20" x2="325" y2="180" stroke="#e5e7eb" />
+                  
+                  <!-- Diagram 2: Collision resistance (衝突困難性) -->
+                  <g transform="translate(330, 0)">
+                      <!-- Top part -->
+                      <rect x="10" y="30" width="60" height="30" rx="2" fill="#f3f4f6" stroke="#d1d5db"/>
+                      <text x="40" y="50" text-anchor="middle" font-size="10" class="font-mono fill-gray-800">hello</text>
+                      <path d="M 70 45 L 185 45" stroke="#8b5cf6" stroke-width="1.5" marker-end="url(#arrow_purple_hash)"/>
+                      <rect x="185" y="30" width="135" height="30" rx="2" fill="#f3f4f6" stroke="#d1d5db"/>
+                      <foreignObject x="190" y="35" width="125" height="20">
+                          <div class="text-[7px] break-words leading-tight font-mono">66a045...1bb35f18</div>
+                      </foreignObject>
+
+                      <!-- Bottom part -->
+                      <rect x="10" y="110" width="60" height="30" rx="2" fill="#f3f4f6" stroke="#d1d5db"/>
+                      <text x="40" y="130" text-anchor="middle" font-size="10" class="font-mono fill-gray-800">Hello</text>
+                      <path d="M 70 125 L 185 125" stroke="#8b5cf6" stroke-width="1.5" marker-end="url(#arrow_purple_hash)"/>
+                      <rect x="185" y="110" width="135" height="30" rx="2" fill="#f3f4f6" stroke="#d1d5db"/>
+                      <foreignObject x="190" y="115" width="125" height="20">
+                          <div class="text-[7px] break-words leading-tight font-mono">5891b5...46f6be03</div>
+                      </foreignObject>
+
+                      <!-- Connecting arrows and labels -->
+                      <path d="M 40 60 L 40 110" stroke="#6b7280" stroke-width="1.5" marker-start="url(#arrow_gray_hash)" marker-end="url(#arrow_gray_hash)"/>
+                      <text x="25" y="85" text-anchor="middle" font-size="9" class="fill-gray-600">1文字違い</text>
+
+                      <path d="M 252.5 60 L 252.5 110" stroke="#6b7280" stroke-width="1.5" marker-start="url(#arrow_gray_hash)" marker-end="url(#arrow_gray_hash)"/>
+                      <text x="230" y="85" text-anchor="middle" font-size="9" class="fill-gray-600">大きく異なる</text>
+                  </g>
+                </svg>
+                <div class="text-sm mt-4"><strong>主な用途:</strong> データの完全性・改ざんチェック、パスワードの安全な保存など</div>
+              </div>
+            </div>
+          </div>
+      </div>
+      
+      <!-- スライド7: A.6 IPアドレスとドメイン名 -->
+      <div class="slide bg-gradient-to-br from-gray-100 to-slate-200" data-slide="6">
+          <div class="max-w-5xl mx-auto p-4 md:p-8">
+              <div class="mb-8 flex items-center gap-4">
+                  <div class="p-3 rounded-full bg-slate-200"><i data-lucide="globe" class="w-6 h-6 text-slate-700"></i></div>
+                  <h2 class="text-4xl font-bold">A.6 IPアドレスとドメイン名</h2>
+              </div>
+              <p class="text-center mb-6">インターネット上のコンピュータを識別するための「住所」がIPアドレス。それを人間が覚えやすい名前にしたのがドメイン名です。</p>
+              <div class="bg-white/80 p-6 rounded-xl shadow-md">
+                 <h3 class="font-semibold text-slate-800 text-center mb-4">DNSによる名前解決の流れ</h3>
+                 <div class="flex flex-col md:flex-row items-center justify-around gap-4 text-sm text-center">
+                    <div class="p-4 bg-blue-50 rounded-lg">
+                        <i data-lucide="laptop" class="w-12 h-12 mx-auto mb-2 text-blue-600"></i>
+                        <p><strong>1.</strong> ブラウザが「gihyo.jpのIPアドレスは？」とDNSに問い合わせる</p>
+                    </div>
+                    <i data-lucide="arrow-right" class="w-8 h-8 text-gray-400"></i>
+                     <div class="p-4 bg-gray-100 rounded-lg">
+                        <i data-lucide="database" class="w-12 h-12 mx-auto mb-2 text-gray-600"></i>
+                        <p><strong>2.</strong> DNSが「xxx.xxx.xxx.xxxです」と応答する</p>
+                    </div>
+                    <i data-lucide="arrow-right" class="w-8 h-8 text-gray-400"></i>
+                     <div class="p-4 bg-green-50 rounded-lg">
+                        <i data-lucide="server" class="w-12 h-12 mx-auto mb-2 text-green-600"></i>
+                        <p><strong>3.</strong> ブラウザがIPアドレス宛にHTTPリクエストを送信する</p>
+                    </div>
+                 </div>
+              </div>
+          </div>
+      </div>
+      
+       <!-- スライド8: A.7 TCP/IP (修正) -->
+      <div class="slide bg-gradient-to-br from-red-50 to-pink-100" data-slide="7">
+          <div class="scrollable-container max-w-4xl mx-auto">
+              <div class="sticky-header bg-gradient-to-br from-red-50 to-pink-100 flex items-center gap-4">
+                  <div class="p-3 rounded-full bg-pink-100"><i data-lucide="network" class="w-6 h-6 text-pink-600"></i></div>
+                  <h2 class="text-4xl font-bold">A.7 TCP/IP</h2>
+              </div>
+              <div class="pt-6 space-y-4">
+                <div class="bg-white/80 p-4 rounded-xl shadow-md">
+                  <h3 class="font-semibold text-pink-800 mb-2">通信の階層</h3>
+                  <p class="text-sm">コンピュータの通信機能は役割ごとに階層化されています (TCP/IPモデル)。</p>
+                  <ul class="text-xs list-decimal list-inside mt-2 space-y-1">
+                      <li><strong>アプリケーション層:</strong> HTTP, DNSなど</li>
+                      <li><strong>トランスポート層:</strong> TCP, UDP</li>
+                      <li><strong>インターネット層:</strong> IP</li>
+                      <li><strong>ネットワークインターフェース層</strong></li>
+                  </ul>
+                </div>
+                <div class="bg-white/80 p-4 rounded-xl shadow-md">
+                  <h3 class="font-semibold text-pink-800 mb-2">3ウェイハンドシェイク</h3>
+                  <p class="text-sm mb-2">TCPは信頼性のある通信のため、通信開始時に3回のパケット交換で接続を確立します。</p>
+                   <svg viewBox="0 0 400 200" class="w-full h-auto">
+                       <defs>
+                           <marker id="arrow_gray" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="4" markerHeight="4" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#6b7280"/></marker>
+                       </defs>
+                       <text x="50" y="15" text-anchor="middle" font-size="12">クライアント</text>
+                       <text x="350" y="15" text-anchor="middle" font-size="12">サーバ</text>
+                       <line x1="50" y1="20" x2="50" y2="180" stroke="#d1d5db" stroke-width="2" stroke-dasharray="4"/>
+                       <line x1="350" y1="20" x2="350" y2="180" stroke="#d1d5db" stroke-width="2" stroke-dasharray="4"/>
+                       <path d="M 60 40 H 340" stroke="#ef4444" stroke-width="2" marker-end="url(#arrow_gray)"/>
+                       <text x="200" y="35" text-anchor="middle" font-size="10">① これから通信を始めます (SYN)</text>
+                       <path d="M 340 80 H 60" stroke="#ef4444" stroke-width="2" marker-end="url(#arrow_gray)"/>
+                       <text x="200" y="75" text-anchor="middle" font-size="10">② わかりました (SYN/ACK)</text>
+                       <path d="M 60 120 H 340" stroke="#ef4444" stroke-width="2" marker-end="url(#arrow_gray)"/>
+                       <text x="200" y="115" text-anchor="middle" font-size="10">③ では、お願いします (ACK)</text>
+                       <text x="200" y="150" text-anchor="middle" font-size="10" fill="#6b7280">--- アプリケーションデータ通信 ---</text>
+                   </svg>
+                </div>
+              </div>
+          </div>
+      </div>
+
+       <!-- スライド9: A.8 標準入力と標準出力 -->
+      <div class="slide bg-gradient-to-br from-blue-50 to-cyan-100" data-slide="8">
+        <div class="max-w-4xl mx-auto p-4 md:p-8">
+            <div class="mb-8 flex items-center gap-4">
+                <div class="p-3 rounded-full bg-cyan-100"><i data-lucide="terminal" class="w-6 h-6 text-cyan-600"></i></div>
+                <h2 class="text-4xl font-bold">A.8 標準入力・標準出力</h2>
+            </div>
+            <p class="text-center mb-6">コマンドラインプログラムにおける、基本的なデータの出入り口です。</p>
+            <div class="bg-white/80 p-6 rounded-xl shadow-md grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <h3 class="font-semibold text-cyan-800 mb-2">リダイレクト</h3>
+                <p class="text-sm mb-2">出入力の先を、デフォルトの画面やキーボードからファイルに変更する機能。</p>
+                <div class="code-block text-sm"><pre><code># 出力をファイルに保存
+$ ls > filelist.txt</code></pre></div>
+              </div>
+              <div>
+                <h3 class="font-semibold text-cyan-800 mb-2">パイプ |</h3>
+                <p class="text-sm mb-2">あるコマンドの標準出力を、別のコマンドの標準入力に直接つなぐ機能。</p>
+                <div class="code-block text-sm"><pre><code># lsの結果をsortで並び替え
+$ ls | sort</code></pre></div>
+              </div>
+            </div>
+        </div>
+      </div>
+      
+      <!-- スライド10: A.9 構造化データ(1) (新規) -->
+      <div class="slide bg-gradient-to-br from-purple-50 to-indigo-100" data-slide="9">
+          <div class="scrollable-container max-w-5xl mx-auto">
+              <div class="sticky-header bg-gradient-to-br from-purple-50 to-indigo-100 flex items-center gap-4">
+                  <div class="p-3 rounded-full bg-indigo-100"><i data-lucide="file-json-2" class="w-6 h-6 text-indigo-600"></i></div>
+                  <h2 class="text-4xl font-bold">A.9 構造化データ(1) CSV & XML</h2>
+              </div>
+              <div class="pt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+                 <div class="bg-white/80 p-4 rounded-xl shadow-md">
+                    <h3 class="font-semibold text-indigo-800 mb-2">CSV (Comma-Separated Values)</h3>
+                    <p class="text-xs mb-2">カンマで区切られた表形式データ。単純ですが、データ内にカンマを含む場合の扱いが厄介なこともあります。</p>
+                    <div class="code-block text-xs"><pre><code>"1020072","トウキョウト","チヨダク","イイダバシ",...
+"1020082","トウキョウト","チヨダク","イチバンチョウ",...
+"1010032","トウキョウト","チヨダク","イワモトチョウ",...
+...</code></pre></div>
+                 </div>
+                 <div class="bg-white/80 p-4 rounded-xl shadow-md">
+                    <h3 class="font-semibold text-indigo-800 mb-2">XML (eXtensible Markup Language)</h3>
+                    <p class="text-xs mb-2">タグで階層構造を表現。厳格なルールでデータ交換に適しますが、記述が冗長になりがちです。</p>
+                    <div class="code-block text-xs"><pre><code>&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;Configuration&gt;
+  &lt;Appenders&gt;
+    &lt;Console name="STDOUT" target="SYSTEM_OUT"&gt;
+      &lt;PatternLayout pattern="%d %-5p..." /&gt;
+    &lt;/Console&gt;
+  &lt;/Appenders&gt;
+  ...
+&lt;/Configuration&gt;</code></pre></div>
+                 </div>
+              </div>
+          </div>
+      </div>
+      
+      <!-- スライド11: A.9 構造化データ(2) (新規) -->
+      <div class="slide bg-gradient-to-br from-purple-50 to-indigo-100" data-slide="10">
+          <div class="scrollable-container max-w-5xl mx-auto">
+              <div class="sticky-header bg-gradient-to-br from-purple-50 to-indigo-100 flex items-center gap-4">
+                  <div class="p-3 rounded-full bg-indigo-100"><i data-lucide="file-json-2" class="w-6 h-6 text-indigo-600"></i></div>
+                  <h2 class="text-4xl font-bold">A.9 構造化データ(2) JSON & YAML</h2>
+              </div>
+              <div class="pt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+                 <div class="bg-white/80 p-4 rounded-xl shadow-md">
+                    <h3 class="font-semibold text-indigo-800 mb-2">JSON (JavaScript Object Notation)</h3>
+                    <p class="text-xs mb-2">軽量で人間にも読みやすい。現代のWeb APIでは主流のデータ形式です。</p>
+                    <div class="code-block text-xs"><pre><code>{
+  "appenders": [
+    {
+      "console": {
+        "name": "STDOUT",
+        "target": "SYSTEM_OUT",
+        "patternLayout": {
+          "pattern": "%d %-5p..."
+        }
+      }
+    }
+  ],
+  ...
+}</code></pre></div>
+                 </div>
+                 <div class="bg-white/80 p-4 rounded-xl shadow-md">
+                    <h3 class="font-semibold text-indigo-800 mb-2">YAML (YAML Ain't Markup Language)</h3>
+                    <p class="text-xs mb-2">インデントで階層を表現。人間が記述する設定ファイルなどで人気があります。</p>
+                     <div class="code-block text-xs"><pre><code>appenders:
+  - console:
+      name: STDOUT
+      target: SYSTEM_OUT
+      patternLayout:
+        pattern: '%d %-5p...'
+...</code></pre></div>
+                 </div>
+              </div>
+          </div>
+      </div>
+
+      <!-- スライド12: まとめ (旧スライド11) -->
+      <div class="slide bg-gradient-to-br from-emerald-50 to-green-100" data-slide="11">
+          <div class="max-w-4xl mx-auto text-center p-4 md:p-8">
+              <h2 class="text-4xl font-bold mb-10">付録Aのまとめ</h2>
+              <div class="space-y-6 text-left bg-white/80 p-8 rounded-xl shadow-lg">
+                  <div class="flex items-start gap-4">
+                      <i data-lucide="binary" class="w-10 h-10 text-green-600 mt-1"></i>
+                      <p><strong>データ表現:</strong> コンピュータは0と1で情報を扱う。16進数はそれを扱いやすくしたものであり、Base64はバイナリをテキストで安全に扱うための手法である。</p>
+                  </div>
+                  <div class="flex items-start gap-4">
+                      <i data-lucide="lock" class="w-10 h-10 text-green-600 mt-1"></i>
+                      <p><strong>データの一意性:</strong> ハッシュ値はデータの一方向性の指紋であり、改ざん検知やパスワード保存に不可欠である。</p>
+                  </div>
+                  <div class="flex items-start gap-4">
+                      <i data-lucide="globe-2" class="w-10 h-10 text-green-600 mt-1"></i>
+                      <p><strong>通信の仕組み:</strong> 我々が使うアプリケーションの下では、DNS, TCP/IPといった階層化されたプロトコルが、確実なデータ交換を支えている。</p>
+                  </div>
+              </div>
+          </div>
+      </div>
+      
+    </div>
+
+    <!-- ナビゲーション -->
+    <div class="absolute bottom-8 right-8 flex gap-4 z-50">
+      <button id="prev-btn" class="w-12 h-12 rounded-full bg-white/90 shadow-lg flex items-center justify-center text-gray-700 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition-all">
+        <i data-lucide="chevron-left" class="w-6 h-6"></i>
+      </button>
+      <button id="next-btn" class="w-12 h-12 rounded-full bg-white/90 shadow-lg flex items-center justify-center text-gray-700 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition-all">
+        <i data-lucide="chevron-right" class="w-6 h-6"></i>
+      </button>
+    </div>
+
+    <!-- プログレスバー -->
+    <div class="absolute bottom-0 left-0 right-0 h-1 bg-gray-200 z-50">
+      <div id="progress-bar" class="h-full bg-slate-600 transition-all duration-300 ease-in-out"></div>
+    </div>
+
+    <!-- スライド番号 -->
+    <div class="absolute bottom-8 left-8 text-sm font-medium text-gray-600 z-50">
+      <span id="current-slide">1</span> / <span id="total-slides">12</span>
+    </div>
+  </div>
+
+  <script>
+    // スライドナビゲーションのスクリプト
+    document.addEventListener('DOMContentLoaded', () => {
+      lucide.createIcons();
+
+      const slides = document.querySelectorAll('.slide');
+      const prevBtn = document.getElementById('prev-btn');
+      const nextBtn = document.getElementById('next-btn');
+      const currentSlideEl = document.getElementById('current-slide');
+      const totalSlidesEl = document.getElementById('total-slides');
+      const progressBar = document.getElementById('progress-bar');
+      
+      const totalSlides = slides.length;
+      totalSlidesEl.textContent = totalSlides;
+      
+      let currentSlide = 0;
+
+      function updateSlide() {
+        slides.forEach((slide, index) => {
+          const scrollable = slide.querySelector('.scrollable-container');
+          if (index === currentSlide) {
+            slide.classList.add('active');
+            if (scrollable) scrollable.scrollTop = 0;
+          } else {
+            slide.classList.remove('active');
+          }
+        });
+        
+        currentSlideEl.textContent = currentSlide + 1;
+        
+        const progressPercentage = ((currentSlide + 1) / totalSlides) * 100;
+        progressBar.style.width = `${progressPercentage}%`;
+        
+        prevBtn.disabled = currentSlide === 0;
+        nextBtn.disabled = currentSlide === totalSlides - 1;
+      }
+
+      function handleNext(e) {
+        e.preventDefault(); 
+        if (currentSlide < totalSlides - 1) {
+          currentSlide++;
+          updateSlide();
+        }
+      }
+
+      function handlePrev(e) {
+        e.preventDefault();
+        if (currentSlide > 0) {
+          currentSlide--;
+          updateSlide();
+        }
+      }
+
+      nextBtn.addEventListener('click', handleNext);
+      prevBtn.addEventListener('click', handlePrev);
+      
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight' && !nextBtn.disabled) {
+          handleNext(e);
+        } else if (e.key === 'ArrowLeft' && !prevBtn.disabled) {
+          handlePrev(e);
+        }
+      });
+
+      updateSlide();
+    });
+  </script>
+</body>
+</html>
