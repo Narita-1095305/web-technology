@@ -79,6 +79,27 @@
         background-size: 200% 200%;
         animation: animated-gradient 15s ease infinite;
     }
+    .devtools-mockup {
+      border: 1px solid #d1d5db;
+      border-radius: 0.5rem;
+      background: #f9fafb;
+      box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+      font-family: monospace;
+      font-size: 0.75rem;
+      line-height: 1.4;
+    }
+    .devtools-header {
+      padding: 0.5rem;
+      border-bottom: 1px solid #d1d5db;
+      color: #4b5563;
+    }
+    .devtools-body {
+      padding: 0.5rem;
+      overflow-x: auto;
+      color: #1f2937;
+    }
+    .header-name { color: #9ca3af; }
+    .header-value { color: #374151; }
   </style>
 </head>
 <body class="bg-gray-50 text-gray-800">
@@ -100,84 +121,79 @@
             </p>
         </div>
       </div>
-
-      <!-- スライド2: Go言語によるWebサーバ作成 -->
+      
+      <!-- スライド2: Goサーバ(1) 文字列を返す -->
       <div class="slide bg-gradient-to-br from-gray-100 to-slate-200" data-slide="1">
         <div class="scrollable-container max-w-4xl mx-auto">
           <div class="sticky-header bg-gradient-to-br from-gray-100 to-slate-200 flex items-center gap-4">
             <div class="p-3 rounded-full bg-slate-200"><i data-lucide="server" class="w-6 h-6 text-slate-700"></i></div>
-            <h2 class="text-4xl font-bold">Goによる簡単なWebサーバ作成</h2>
+            <h2 class="text-4xl font-bold">Goサーバ(1): 文字列を返す</h2>
           </div>
-          <div class="pt-6 space-y-6">
+          <div class="pt-6">
             <div class="bg-white/80 p-6 rounded-xl shadow-md">
-              <h3 class="text-lg font-semibold text-slate-800 mb-2">① 文字列を返すサーバ</h3>
-              <p class="text-sm mb-2">Goの標準ライブラリ `net/http` を使うと、非常に短いコードでHTTPサーバを起動できます。`http.HandleFunc`でパスと処理関数を紐付け、`http.ListenAndServe`でサーバを開始します。</p>
-              <div class="code-block text-sm"><pre><code>package main
-import ("fmt"; "log"; "net/http")
+              <p class="text-sm mb-2">Goの標準ライブラリ `net/http` でシンプルなWebサーバを起動します。</p>
+              <div class="code-block text-sm"><pre><code>// ファイル名: main.go
+package main
 
-// "/hello"へのリクエストを処理するハンドラ
+import (
+    "fmt"
+    "log"
+    "net/http"
+)
+
+// / にリクエストがあった際の処理
 func hello(w http.ResponseWriter, r *http.Request) {
     fmt.Fprint(w, "Hello, Web application!")
 }
 
 func main() {
-    http.HandleFunc("/hello", hello) // URLパスと関数を紐付け
-    log.Fatal(http.ListenAndServe(":8080", nil)) // 8080ポートで待受
-}</code></pre></div>
-            </div>
-            <div class="bg-white/80 p-6 rounded-xl shadow-md">
-              <h3 class="text-lg font-semibold text-slate-800 mb-2">② 静的ファイルを返すサーバ</h3>
-              <p class="text-sm mb-2">`http.FileServer` を使うと、指定したディレクトリ以下の静的ファイル（HTML, CSS等）を配信するサーバを簡単に実装できます。</p>
-              <div class="code-block text-sm"><pre><code>func main() {
-    // "/static/"以下のパスへのリクエストを、"static"ディレクトリのファイルにマッピング
-    fs := http.FileServer(http.Dir("static"))
-    http.Handle("/static/", http.StripPrefix("/static/", fs))
+    // URLパスと関数を紐付け
+    http.HandleFunc("/", hello)
     
-    log.Fatal(http.ListenAndServe(":8080", nil))
+    // 8080番ポートでサーバを起動
+    err := http.ListenAndServe(":8080", nil)
+    if err != nil {
+        log.Fatal("failed to start: ", err)
+    }
 }</code></pre></div>
+              <p class="text-sm mt-4 mb-2"><strong>実行方法:</strong></p>
+              <div class="code-block text-sm"><pre><code># ターミナルで実行
+$ go run main.go</code></pre></div>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- スライド3: ToDoアプリの基本構造 -->
-      <div class="slide bg-gradient-to-br from-green-50 to-teal-100" data-slide="2">
+      <!-- スライド3: Goサーバ(2) 静的ファイルを返す -->
+      <div class="slide bg-gradient-to-br from-gray-100 to-slate-200" data-slide="2">
         <div class="scrollable-container max-w-4xl mx-auto">
-          <div class="sticky-header bg-gradient-to-br from-green-50 to-teal-100 flex items-center gap-4">
-            <div class="p-3 rounded-full bg-teal-100"><i data-lucide="list-checks" class="w-6 h-6 text-teal-700"></i></div>
-            <h2 class="text-4xl font-bold">ToDoアプリの基本構造</h2>
+          <div class="sticky-header bg-gradient-to-br from-gray-100 to-slate-200 flex items-center gap-4">
+            <div class="p-3 rounded-full bg-slate-200"><i data-lucide="folder" class="w-6 h-6 text-slate-700"></i></div>
+            <h2 class="text-4xl font-bold">Goサーバ(2): 静的ファイルを返す</h2>
           </div>
-          <div class="pt-6 space-y-6">
-            <p class="text-center">簡単なToDoアプリを題材に、Webアプリの基本を学びます。まずは固定のリストを表示する機能から。</p>
+          <div class="pt-6">
             <div class="bg-white/80 p-6 rounded-xl shadow-md">
-              <h3 class="text-lg font-semibold text-teal-800 mb-2">Goプログラム (main.go)</h3>
-              <p class="text-sm mb-2">`html/template` パッケージを使い、HTMLテンプレートと動的なデータを組み合わせてレスポンスを生成します。</p>
-              <div class="code-block text-sm"><pre><code>var todoList []string // ToDoを保持する変数
+              <p class="text-sm mb-2">`http.FileServer` で、指定ディレクトリ配下のHTMLやCSSなどを配信します。</p>
+              <div class="code-block text-sm"><pre><code>// ファイル名: main.go
+package main
 
-// /todo へのリクエストを処理
-func handleTodo(w http.ResponseWriter, r *http.Request) {
-    // テンプレートファイルをパース
-    t, _ := template.ParseFiles("templates/todo.html")
-    // テンプレートにtodoListを埋め込んでレスポンスを生成
-    t.Execute(w, todoList)
-}
+import (
+    "log"
+    "net/http"
+)
 
 func main() {
-    todoList = append(todoList, "顔を洗う", "朝食を食べる")
-    http.HandleFunc("/todo", handleTodo)
-    // ...サーバ起動
+    // URLの /... へのリクエストを static/ ディレクトリにマッピング
+    http.Handle("/", http.FileServer(http.Dir("static")))
+
+    log.Fatal(http.ListenAndServe(":8080", nil))
 }</code></pre></div>
-            </div>
-            <div class="bg-white/80 p-6 rounded-xl shadow-md">
-              <h3 class="text-lg font-semibold text-teal-800 mb-2">HTMLテンプレート (templates/todo.html)</h3>
-              <p class="text-sm mb-2">`{{range .}}` と `{{end}}` で渡されたデータ（スライス）をループ処理し、リスト項目を動的に生成します。</p>
-              <div class="code-block text-sm"><pre><code>&lt;ul class="todo-list"&gt;
-    {{range .}} &lt;!-- ループ開始 --&gt;
-    &lt;li class="todo-item"&gt;
-        &lt;label&gt;{{.}}&lt;/label&gt; &lt;!-- 各要素を表示 --&gt;
-    &lt;/li&gt;
-    {{end}} &lt;!-- ループ終了 --&gt;
-&lt;/ul&gt;</code></pre></div>
+               <p class="text-sm mt-4 mb-2"><strong>ディレクトリ構成:</strong></p>
+               <div class="code-block text-sm bg-gray-700"><pre><code>.
+├── main.go
+└── static/
+    └── hello.html</code></pre></div>
+                <p class="text-sm mt-4">`go run main.go` を実行後、ブラウザで `http://localhost:8080/hello.html` にアクセスするとファイルの内容が表示されます。</p>
             </div>
           </div>
         </div>
@@ -185,76 +201,98 @@ func main() {
       
       <!-- スライド4: 画面遷移の問題点 -->
       <div class="slide bg-gradient-to-br from-red-50 to-pink-100" data-slide="3">
-          <div class="max-w-5xl mx-auto p-4 md:p-8">
-              <div class="mb-8 flex items-center gap-4">
+          <div class="scrollable-container max-w-5xl mx-auto">
+              <div class="sticky-header bg-gradient-to-br from-red-50 to-pink-100 flex items-center gap-4">
                   <div class="p-3 rounded-full bg-pink-100"><i data-lucide="alert-triangle" class="w-6 h-6 text-pink-600"></i></div>
-                  <h2 class="text-4xl font-bold">画面遷移の問題点</h2>
+                  <h2 class="text-4xl font-bold">画面遷移の問題点と原因コード</h2>
               </div>
-              <p class="text-center mb-4">ToDo項目を追加する機能を実装します。しかし、単純な実装では問題が発生します。</p>
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div class="bg-white/80 p-6 rounded-xl shadow-md space-y-4">
-                  <h3 class="font-semibold text-xl text-pink-800">問題: POST後のリロード</h3>
-                  <p class="text-sm">フォームからPOSTリクエストでデータを追加した後、ブラウザをリロードすると...<br><strong>→ 同じPOSTリクエストが再送信され、データが二重に登録されてしまいます。</strong></p>
-                  <div class="text-center p-4 bg-red-50 rounded-lg">
-                      <p class="text-sm font-semibold">原因</p>
-                      <p class="text-xs mt-1">ブラウザは最後に表示したページのURL（この場合 `/add`）をリロードしようとするため。</p>
+              <div class="pt-6">
+                <p class="text-center mb-4">ToDo項目を追加後、ブラウザをリロードすると同じデータが二重登録されてしまいます。</p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div class="bg-white/80 p-6 rounded-xl shadow-md">
+                    <h3 class="text-lg font-semibold text-pink-800 mb-2">原因のコード (handleAdd関数)</h3>
+                    <p class="text-sm mb-2">POSTリクエストを受けた後、処理結果のHTMLを<strong class="text-pink-600">直接レスポンスとして返してしまっている</strong>のが原因です。このため、ブラウザのURLは `/add` のままになります。</p>
+                    <div class="code-block text-xs"><pre><code>func handleAdd(w http.ResponseWriter, r *http.Request) {
+    r.ParseForm()
+    todo := r.Form.Get("todo")
+    todoList = append(todoList, todo)
+    
+    // 問題点: 処理後にHTMLを直接返している
+    handleTodo(w, r) 
+}</code></pre></div>
                   </div>
-                </div>
-                <div class="bg-white/80 p-6 rounded-xl shadow-md space-y-4">
-                  <h3 class="font-semibold text-xl text-pink-800">通信フロー</h3>
-                  <p class="text-sm">① /addへPOST → ② 項目追加後のHTMLをレスポンス → ③ リロードで再び/addへPOST</p>
-                   <div class="text-center mt-2">
-                       <i data-lucide="user" class="w-8 h-8 inline-block"></i>
-                       <i data-lucide="arrow-right" class="w-6 h-6 inline-block mx-2"></i>
-                       <span class="font-mono bg-red-100 px-2 py-1 rounded">POST /add</span>
-                       <i data-lucide="arrow-right" class="w-6 h-6 inline-block mx-2"></i>
-                       <i data-lucide="server" class="w-8 h-8 inline-block"></i>
-                       <p class="text-xs mt-2">リロードで同じ処理が繰り返される</p>
-                   </div>
+                  <div class="bg-white/80 p-6 rounded-xl shadow-md">
+                    <h3 class="text-lg font-semibold text-pink-800 mb-2">フォームのHTML</h3>
+                    <p class="text-sm mb-2">このフォームは `/add` へPOSTリクエストを送信します。</p>
+                    <div class="code-block text-xs"><pre><code>&lt;form method="post" action="add"&gt;
+  &lt;input type="text" name="todo"&gt;
+  &lt;button type="submit"&gt;Add&lt;/button&gt;
+&lt;/form&gt;</code></pre></div>
+                    <p class="text-sm mt-4">リロードすると、ブラウザは最後に実行したリクエスト、つまり `/add` へのPOSTを再送信してしまうのです。</p>
+                  </div>
                 </div>
               </div>
           </div>
       </div>
       
-       <!-- スライド5: PRG (Post-Redirect-Get) パターン -->
+       <!-- スライド5: 解決策: Post-Redirect-Get (PRG) -->
       <div class="slide bg-gradient-to-br from-blue-50 to-sky-100" data-slide="4">
           <div class="max-w-5xl mx-auto p-4 md:p-8">
               <div class="mb-8 flex items-center gap-4">
                   <div class="p-3 rounded-full bg-sky-100"><i data-lucide="recycle" class="w-6 h-6 text-sky-600"></i></div>
                   <h2 class="text-4xl font-bold">解決策: Post-Redirect-Get (PRG)</h2>
               </div>
-              <p class="text-center mb-4">この問題を解決する定番パターンが「Post-Redirect-Get」です。</p>
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div class="bg-white/80 p-6 rounded-xl shadow-md space-y-4">
-                  <h3 class="font-semibold text-xl text-sky-800">PRGパターンの動作</h3>
-                  <p class="text-sm">POSTリクエストでデータ処理後、HTMLを直接返さず、<strong>303 See Other</strong>というステータスコードと一覧ページのURL (`/todo`) を持つリダイレクトレスポンスを返します。</p>
-                  <p class="text-sm">ブラウザは指示に従い、一覧ページにGETリクエストを再送信します。</p>
-                </div>
-                <div class="bg-white/80 p-6 rounded-xl shadow-md space-y-4">
-                  <h3 class="font-semibold text-xl text-sky-800">通信フロー</h3>
-                   <div class="text-sm space-y-2">
-                       <p>① <span class="font-mono bg-red-100 px-2 rounded">POST /add</span></p>
-                       <p>② <span class="font-mono bg-blue-100 px-2 rounded">Redirect to /todo</span> (サーバからの指示)</p>
-                       <p>③ <span class="font-mono bg-green-100 px-2 rounded">GET /todo</span> (ブラウザが再リクエスト)</p>
-                   </div>
-                  <p class="text-sm mt-4">この結果、ブラウザのURLは `/todo` になり、リロードしても安全なGETリクエストが送信されるだけになります。</p>
-                </div>
-              </div>
-              <div class="mt-6 bg-white/80 p-4 rounded-xl shadow-md">
+              <p class="text-center mb-4">POST処理後にHTMLを直接返さず、一覧ページへリダイレクトさせることで二重送信を防ぎます。</p>
+              <div class="bg-white/80 p-6 rounded-xl shadow-md">
                  <h3 class="font-semibold text-sky-800 mb-2">Goによる実装</h3>
-                 <p class="text-sm mb-2">`http.Redirect`関数を使うだけで簡単に実装できます。</p>
+                 <p class="text-sm mb-2">`http.Redirect`関数で、ステータスコード`303 See Other`とリダイレクト先のURLを返します。</p>
                  <div class="code-block text-sm"><pre><code>func handleAdd(w http.ResponseWriter, r *http.Request) {
     // ... ToDo項目追加処理 ...
     
-    // /todo へリダイレクト
+    // 処理後、/todo へリダイレクトさせる
     http.Redirect(w, r, "/todo", http.StatusSeeOther)
 }</code></pre></div>
               </div>
           </div>
       </div>
       
-      <!-- スライド6: 状態管理とステートレスなHTTP -->
-      <div class="slide bg-gradient-to-br from-purple-50 to-indigo-100" data-slide="5">
+      <!-- スライド6: 実践: PRGパターンの動作確認 (DevTools) -->
+      <div class="slide bg-gradient-to-br from-blue-50 to-sky-100" data-slide="5">
+        <div class="scrollable-container max-w-5xl mx-auto">
+          <div class="sticky-header bg-gradient-to-br from-blue-50 to-sky-100 flex items-center gap-4">
+            <div class="p-3 rounded-full bg-sky-100"><i data-lucide="search" class="w-6 h-6 text-sky-600"></i></div>
+            <h2 class="text-4xl font-bold">実践: PRGパターンの動作確認</h2>
+          </div>
+          <div class="pt-6">
+            <p class="text-center mb-4">ChromeのDevToolsを使い、PRGの通信の流れを目で見て確認します。</p>
+            <div class="bg-white/80 p-6 rounded-xl shadow-md space-y-4">
+              <h3 class="text-lg font-semibold text-sky-800">1. Networkパネルの記録</h3>
+              <p class="text-sm">ToDoを追加すると、Networkパネルには3つのリクエストが記録されます。</p>
+              <div class="devtools-mockup">
+                <div class="devtools-header">Name, Status, Type, Initiator</div>
+                <div class="devtools-body">
+                  <div>/add &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="bg-blue-200 px-1 rounded">303</span> &nbsp;document &nbsp;other</div>
+                  <div>/todo &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="bg-green-200 px-1 rounded">200</span> &nbsp;document &nbsp;add</div>
+                  <div>/static/.. <span class="bg-green-200 px-1 rounded">200</span> &nbsp;stylesheet todo</div>
+                </div>
+              </div>
+              <p class="text-sm mt-2">`/add`へのPOSTが`303`でリダイレクトされ、ブラウザが自発的に`/todo`へGETしているのがわかります。</p>
+              <h3 class="text-lg font-semibold text-sky-800 mt-4">2. リダイレクトレスポンスの確認</h3>
+              <p class="text-sm">`/add`のリクエスト詳細を見ると、レスポンスヘッダにリダイレクト先が指定されています。</p>
+              <div class="devtools-mockup">
+                <div class="devtools-header">Response Headers</div>
+                <div class="devtools-body">
+                  <div><span class="header-name">Location:</span> <span class="header-value">/todo</span></div>
+                  <div>...</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- スライド7: 状態管理とステートレスなHTTP -->
+      <div class="slide bg-gradient-to-br from-purple-50 to-indigo-100" data-slide="6">
           <div class="max-w-4xl mx-auto p-4 md:p-8 text-center">
               <div class="mb-8 flex items-center justify-center gap-4">
                   <div class="p-3 rounded-full bg-indigo-100"><i data-lucide="link-2-off" class="w-8 h-8 text-indigo-600"></i></div>
@@ -274,8 +312,8 @@ func main() {
           </div>
       </div>
       
-      <!-- スライド7: 解決策: Cookieとセッション (修正版) -->
-      <div class="slide bg-gradient-to-br from-amber-50 to-orange-100" data-slide="6">
+      <!-- スライド8: 解決策: Cookieとセッション -->
+      <div class="slide bg-gradient-to-br from-amber-50 to-orange-100" data-slide="7">
           <div class="scrollable-container max-w-5xl mx-auto">
             <div class="sticky-header bg-gradient-to-br from-amber-50 to-orange-100 flex items-center gap-4">
               <div class="p-3 rounded-full bg-orange-100"><i data-lucide="cookie" class="w-6 h-6 text-orange-600"></i></div>
@@ -285,50 +323,34 @@ func main() {
                 <p class="text-center mb-4">ステートレスなHTTP上で状態を管理するための仕組みが、Cookieとセッションです。</p>
                 <div class="bg-white/80 p-8 rounded-xl shadow-md">
                       <div class="relative w-full max-w-2xl mx-auto" style="height: 320px;">
-                          <!-- Top Left: 1. Initial Access -->
                           <div class="absolute top-0 left-0 text-center p-3 w-40">
                               <i data-lucide="user" class="w-12 h-12 mx-auto text-gray-600"></i>
                               <p class="mt-1 text-sm font-semibold">①初回アクセス</p>
                           </div>
                           
-                          <!-- Top Right: 2. Server Issues ID -->
                           <div class="absolute top-0 right-0 text-center p-3 w-40">
                               <i data-lucide="server" class="w-12 h-12 mx-auto text-gray-600"></i>
                               <p class="mt-1 text-sm font-semibold">②サーバがIDを発行</p>
                           </div>
                           
-                          <!-- Bottom Right: 3. Server Sends Cookie -->
                           <div class="absolute bottom-0 right-0 text-center p-3 w-40">
                               <p class="mt-1 text-sm font-semibold">③レスポンスでCookieを送信</p>
                               <p class="font-mono bg-blue-100 px-2 py-1 rounded-full text-xs mt-1">Set-Cookie: sessionID=x123</p>
                           </div>
 
-                          <!-- Bottom Left: 4. Client Sends Cookie -->
                           <div class="absolute bottom-0 left-0 text-center p-3 w-40">
                               <p class="mt-1 text-sm font-semibold">④以降リクエストでCookieを送信</p>
                               <p class="font-mono bg-orange-100 px-2 py-1 rounded-full text-xs mt-1">Cookie: sessionID=x123</p>
                           </div>
                           
-                          <!-- ARROWS - 修正版 -->
-                          <!-- Arrow 1 -> 2 (horizontal top) -->
-                          <div class="absolute" style="top: 60px; left: 250px; width: 160px; height: 24px;">
-                              <svg width="100%" height="24" viewBox="0 0 160 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M0 12H148M148 12L138 2M148 12L138 22" stroke="#f97316" stroke-width="2.5"/>
-                              </svg>
+                          <div class="absolute" style="top: 60px; left: 180px; width: calc(100% - 360px); height: 24px;">
+                              <svg width="100%" height="24" viewBox="0 0 100 24" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none"><path d="M0 12H98.5M98.5 12L88.5 2M98.5 12L88.5 22" stroke="#f97316" stroke-width="2.5"/></svg>
                           </div>
-                          
-                          <!-- Arrow 2 -> 3 (vertical right) -->
-                          <div class="absolute" style="top: 100px; right: 80px; width: 24px; height: 120px;">
-                              <svg width="24" height="100%" viewBox="0 0 24 120" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M12 0V108M12 108L2 98M12 108L22 98" stroke="#f97316" stroke-width="2.5"/>
-                              </svg>
+                          <div class="absolute" style="top: 90px; right: 80px; height: calc(100% - 180px); width: 24px;">
+                              <svg width="24" height="100%" viewBox="0 0 24 100" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none"><path d="M12 0V98.5M12 98.5L2 88.5M12 98.5L22 88.5" stroke="#f97316" stroke-width="2.5"/></svg>
                           </div>
-                          
-                          <!-- Arrow 3 -> 4 (horizontal bottom) -->
-                          <div class="absolute" style="bottom: 60px; left: 250px; width: 160px; height: 24px;">
-                              <svg width="100%" height="24" viewBox="0 0 160 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M160 12H12M12 12L22 2M12 12L22 22" stroke="#f97316" stroke-width="2.5"/>
-                              </svg>
+                          <div class="absolute" style="bottom: 60px; left: 180px; width: calc(100% - 360px); height: 24px;">
+                              <svg width="100%" height="24" viewBox="0 0 100 24" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none"><path d="M100 12H1.5M1.5 12L11.5 2M1.5 12L11.5 22" stroke="#f97316" stroke-width="2.5"/></svg>
                           </div>
                       </div>
                       <p class="text-sm mt-4 text-center">サーバはセッションIDを使ってユーザを識別し、ユーザごとの情報（セッション情報）をサーバ側で管理します。</p>
@@ -337,118 +359,137 @@ func main() {
           </div>
       </div>
       
-      <!-- スライド8: Cookieの詳細 -->
-      <div class="slide bg-gradient-to-br from-cyan-50 to-teal-100" data-slide="7">
+      <!-- スライド9: 実践: Cookie送受信の確認 (DevTools) -->
+      <div class="slide bg-gradient-to-br from-amber-50 to-orange-100" data-slide="8">
+        <div class="scrollable-container max-w-5xl mx-auto">
+          <div class="sticky-header bg-gradient-to-br from-amber-50 to-orange-100 flex items-center gap-4">
+            <div class="p-3 rounded-full bg-orange-100"><i data-lucide="search-check" class="w-6 h-6 text-orange-600"></i></div>
+            <h2 class="text-4xl font-bold">実践: Cookie送受信の確認</h2>
+          </div>
+          <div class="pt-6 grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="bg-white/80 p-4 rounded-xl shadow-md">
+              <h3 class="text-lg font-semibold text-orange-800 mb-2">① 初回アクセス</h3>
+              <p class="text-xs mb-2">サーバから `Set-Cookie` ヘッダでセッションIDが送られてきます。</p>
+              <div class="devtools-mockup">
+                <div class="devtools-header">Response Headers</div>
+                <div class="devtools-body"><span class="header-name">set-cookie:</span> <span class="header-value">sessionId=...</span></div>
+              </div>
+            </div>
+            <div class="bg-white/80 p-4 rounded-xl shadow-md">
+              <h3 class="text-lg font-semibold text-orange-800 mb-2">② Cookie保存</h3>
+              <p class="text-xs mb-2">ブラウザは受け取ったCookieを `Application` パネルで確認できる場所に保存します。</p>
+              <div class="devtools-mockup">
+                <div class="devtools-header">Application > Cookies</div>
+                <div class="devtools-body">Name: sessionId<br>Value: ...</div>
+              </div>
+            </div>
+            <div class="bg-white/80 p-4 rounded-xl shadow-md">
+              <h3 class="text-lg font-semibold text-orange-800 mb-2">③ 2回目以降</h3>
+              <p class="text-xs mb-2">ブラウザは保存したCookieをリクエストヘッダに含めて自動で送信します。</p>
+              <div class="devtools-mockup">
+                <div class="devtools-header">Request Headers</div>
+                <div class="devtools-body"><span class="header-name">cookie:</span> <span class="header-value">sessionId=...</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- スライド10: セッション管理の実装 -->
+      <div class="slide bg-gradient-to-br from-cyan-50 to-teal-100" data-slide="9">
           <div class="scrollable-container max-w-4xl mx-auto">
             <div class="sticky-header bg-gradient-to-br from-cyan-50 to-teal-100 flex items-center gap-4">
-              <div class="p-3 rounded-full bg-teal-100"><i data-lucide="settings-2" class="w-6 h-6 text-teal-600"></i></div>
-              <h2 class="text-4xl font-bold">Cookieの詳細仕様</h2>
+              <div class="p-3 rounded-full bg-teal-100"><i data-lucide="file-code-2" class="w-6 h-6 text-teal-600"></i></div>
+              <h2 class="text-4xl font-bold">セッション管理の実装コード例</h2>
             </div>
             <div class="pt-6">
-              <p class="text-center mb-4">`Set-Cookie`ヘッダには、値だけでなく様々な属性を指定して、その挙動を制御できます。</p>
+              <p class="text-center mb-4">セッションIDを発行し、Cookieにセットする関数の実装例です。</p>
               <div class="bg-white/80 p-6 rounded-xl shadow-md">
-                <div class="code-block text-xs"><pre><code>Set-Cookie: name=value; Expires=...; Domain=...; Path=...; Secure; HttpOnly; SameSite=...</code></pre></div>
-                <div class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-                    <div class="p-3 bg-teal-50 rounded-lg"><strong>Expires/Max-Age:</strong> 有効期限。指定がなければブラウザを閉じると消えるセッションクッキーになる。</div>
-                    <div class="p-3 bg-teal-50 rounded-lg"><strong>Domain:</strong> Cookieを送信する対象のドメイン。</div>
-                    <div class="p-3 bg-teal-50 rounded-lg"><strong>Path:</strong> Cookieを送信する対象のパス。</div>
-                    <div class="p-3 bg-teal-50 rounded-lg"><strong>Secure:</strong> HTTPS通信でのみCookieを送信する。</div>
-                    <div class="p-3 bg-teal-50 rounded-lg"><strong>HttpOnly:</strong> JavaScriptからのアクセスを禁止し、XSS攻撃のリスクを低減。</div>
-                    <div class="p-3 bg-teal-50 rounded-lg"><strong>SameSite:</strong> CSRF攻撃対策。別ドメインからのリクエストでCookieを送信するかを制御 (Strict/Lax/None)。</div>
-                </div>
-                 <p class="text-xs mt-4 text-teal-800 font-semibold text-center">セキュリティのため、特にSecure, HttpOnly, SameSite属性を適切に設定することが極めて重要です。</p>
+                <div class="code-block text-xs"><pre><code>// ファイル名: session.go (抜粋)
+
+// セッションを開始し、IDを返す。Cookieがなければ新規発行。
+func ensureSession(w http.ResponseWriter, r *http.Request) (string, error) {
+    c, err := r.Cookie("sessionId")
+    // Cookieがなければ新規セッションを開始
+    if err == http.ErrNoCookie {
+        return startSession(w)
+    }
+    return c.Value, nil
+}
+
+// 新しいセッションIDを発行し、Set-Cookieヘッダをレスポンスに設定
+func startSession(w http.ResponseWriter) (string, error) {
+    sessionId, err := makeSessionId() // 安全な乱数でID生成
+    if err != nil {
+        return "", err
+    }
+    cookie := &http.Cookie{
+        Name:     "sessionId",
+        Value:    sessionId,
+        Expires:  time.Now().Add(1800 * time.Second), // 30分有効
+        HttpOnly: true, // JSからアクセス不可
+    }
+    http.SetCookie(w, cookie)
+    return sessionId, nil
+}</code></pre></div>
               </div>
             </div>
           </div>
       </div>
       
-      <!-- スライド9: ユーザ認証の実装 (修正版) -->
-      <div class="slide bg-gradient-to-br from-indigo-50 to-purple-100" data-slide="8">
+      <!-- スライド11: ユーザ認証の実装 -->
+      <div class="slide bg-gradient-to-br from-indigo-50 to-purple-100" data-slide="10">
         <div class="scrollable-container max-w-5xl mx-auto">
           <div class="sticky-header bg-gradient-to-br from-indigo-50 to-purple-100 flex items-center gap-4">
             <div class="p-3 rounded-full bg-purple-100"><i data-lucide="user-check" class="w-6 h-6 text-purple-600"></i></div>
-            <h2 class="text-4xl font-bold">ユーザ認証の実装</h2>
+            <h2 class="text-4xl font-bold">ユーザ認証の実装コード例</h2>
           </div>
-          <div class="pt-6">
-             <p class="text-center mb-4">セッションIDだけではブラウザを識別するのみ。ユーザ自身を識別するには、ユーザIDとパスワードによる認証が必要です。</p>
+          <div class="pt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
              <div class="bg-white/80 p-6 rounded-xl shadow-md">
-                 <div class="relative w-full max-w-3xl mx-auto" style="height: 280px;">
-                    <!-- Top row -->
-                    <div class="absolute top-0 left-0 text-center p-3 w-56">
-                      <i data-lucide="log-in" class="w-8 h-8 mx-auto text-purple-600 mb-1"></i>
-                      <p class="text-sm font-semibold">①ログイン成功</p>
-                    </div>
-                    
-                    <div class="absolute top-0 right-0 text-center p-3 w-56 bg-purple-50 rounded-lg">
-                      <i data-lucide="key-round" class="w-8 h-8 mx-auto text-purple-600 mb-1"></i>
-                      <p class="text-sm font-semibold">②セッション情報にユーザIDを紐付ける</p>
-                    </div>
-                    
-                    <!-- Bottom row -->
-                    <div class="absolute bottom-0 left-0 text-center p-3 w-56 bg-purple-50 rounded-lg">
-                      <i data-lucide="database" class="w-8 h-8 mx-auto text-purple-600 mb-1"></i>
-                      <p class="text-sm font-semibold">④ユーザごとの情報をDBから取得</p>
-                    </div>
-                    
-                    <div class="absolute bottom-0 right-0 text-center p-3 w-56">
-                      <i data-lucide="file-search" class="w-8 h-8 mx-auto text-purple-600 mb-1"></i>
-                      <p class="text-sm font-semibold">③以降のアクセスでセッションからユーザIDを特定</p>
-                    </div>
-                    
-                    <!-- ARROWS - 修正版 -->
-                    <!-- Arrow 1 -> 2 (horizontal top) -->
-                    <div class="absolute" style="top: 50px; left: 300px; width: 120px; height: 24px;">
-                      <svg width="100%" height="24" viewBox="0 0 120 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M0 12H108M108 12L98 2M108 12L98 22" stroke="#9ca3af" stroke-width="2.5"/>
-                      </svg>
-                    </div>
-                    
-                    <!-- Arrow 2 -> 3 (vertical right) -->
-                    <div class="absolute" style="top: 90px; right: 100px; width: 24px; height: 100px;">
-                      <svg width="24" height="100%" viewBox="0 0 24 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M12 0V88M12 88L2 78M12 88L22 78" stroke="#9ca3af" stroke-width="2.5"/>
-                      </svg>
-                    </div>
-                    
-                    <!-- Arrow 3 -> 4 (horizontal bottom) -->
-                    <div class="absolute" style="bottom: 50px; left: 300px; width: 120px; height: 24px;">
-                      <svg width="100%" height="24" viewBox="0 0 120 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M120 12H12M12 12L22 2M12 12L22 22" stroke="#9ca3af" stroke-width="2.5"/>
-                      </svg>
-                    </div>
-                 </div>
-             </div>
-             <div class="mt-6 bg-white/80 p-6 rounded-xl shadow-md">
-                <h3 class="font-semibold text-purple-800 mb-2">パスワードの安全な保存</h3>
-                <p class="text-sm mb-2">パスワードを平文で保存するのは非常に危険です。サーバ側では、パスワードから計算した<strong class="text-purple-600">ハッシュ値</strong>を保存し、ログイン時には入力されたパスワードのハッシュ値と比較して認証を行います。</p>
-                <div class="code-block text-xs"><pre><code>// 登録時: パスワードからハッシュ値を計算して保存
-hashedPassword, _ := bcrypt.GenerateFromPassword(password, ...)
+                <h3 class="font-semibold text-purple-800 mb-2">データ構造の定義</h3>
+                <p class="text-xs mb-2">セッション情報(HttpSession)とユーザ情報(UserAccount)を構造体で定義し、セッションにユーザ情報を紐付けます。</p>
+                <div class="code-block text-xs"><pre><code>type HttpSession struct {
+    SessionId   string
+    UserAccount *UserAccount // ユーザ情報への参照
+    // ...
+}
 
-// 認証時: 入力されたパスワードと保存されたハッシュ値を比較
-err := bcrypt.CompareHashAndPassword(hashedPassword, password)</code></pre></div>
+type UserAccount struct {
+    Id             string
+    HashedPassword string // パスワードはハッシュ化
+    ToDoList       []string
+    // ...
+}</code></pre></div>
+             </div>
+             <div class="bg-white/80 p-6 rounded-xl shadow-md">
+                <h3 class="font-semibold text-purple-800 mb-2">認証処理の核 (Authenticate)</h3>
+                <p class="text-xs mb-2">入力されたパスワードとDBに保存されたハッシュ値を`bcrypt`で比較し、正当性を検証します。</p>
+                <div class="code-block text-xs"><pre><code>func (m *UserAccountManager) Authenticate(
+    userId string, password string) (*UserAccount, error) {
+    
+    account, exists := m.GetUserAccount(userId)
+    if !exists { // ユーザが存在しない
+        return nil, ErrLoginFailed
+    }
+    
+    // パスワードのハッシュ値を比較
+    err := bcrypt.CompareHashAndPassword(
+        []byte(account.HashedPassword), 
+        []byte(password),
+    )
+    if err != nil { // パスワードが一致しない
+        return nil, ErrLoginFailed
+    }
+    
+    return account, nil
+}</code></pre></div>
              </div>
           </div>
         </div>
       </div>
       
-      <!-- スライド10: Webアプリケーションフレームワーク -->
-      <div class="slide bg-gradient-to-br from-gray-200 to-slate-300" data-slide="9">
-        <div class="max-w-4xl mx-auto p-4 md:p-8">
-            <div class="mb-8 flex items-center gap-4">
-                <div class="p-3 rounded-full bg-slate-200"><i data-lucide="gem" class="w-6 h-6 text-slate-700"></i></div>
-                <h2 class="text-4xl font-bold">Webアプリフレームワークの役割</h2>
-            </div>
-            <p class="text-center mb-6">ここまで見てきたように、実用的なWebアプリを作るには、本質的な機能以外に多くの定型的な処理（ルーティング、セッション管理、認証など）が必要です。</p>
-            <div class="bg-white/80 p-6 rounded-xl shadow-md">
-                <h3 class="text-xl font-semibold mb-2 text-slate-800">フレームワーク = 複雑さの隠蔽</h3>
-                <p class="text-sm">Webアプリケーションフレームワークは、これらの複雑な定型処理を肩代わりし、開発者がアプリケーションのコア機能の開発に集中できるようにする「骨組み」です。</p>
-                <p class="text-sm mt-4">フレームワークを使いこなすためにも、その裏側で動いている本章のような仕組みを理解しておくことが、問題解決能力や応用力に繋がります。</p>
-            </div>
-        </div>
-      </div>
-
-      <!-- スライド11: まとめ -->
-      <div class="slide bg-gradient-to-br from-emerald-50 to-teal-100" data-slide="10">
+      <!-- スライド12: まとめ -->
+      <div class="slide bg-gradient-to-br from-emerald-50 to-teal-100" data-slide="11">
           <div class="max-w-4xl mx-auto text-center p-4 md:p-8">
               <h2 class="text-4xl font-bold mb-10">第6章のまとめ</h2>
               <div class="space-y-6 text-left bg-white/80 p-8 rounded-xl shadow-lg">
@@ -487,7 +528,7 @@ err := bcrypt.CompareHashAndPassword(hashedPassword, password)</code></pre></div
 
     <!-- スライド番号 -->
     <div class="absolute bottom-8 left-8 text-sm font-medium text-gray-600 z-50">
-      <span id="current-slide">1</span> / <span id="total-slides">11</span>
+      <span id="current-slide">1</span> / <span id="total-slides">12</span>
     </div>
   </div>
 
